@@ -1,0 +1,71 @@
+class StatusBar extends DrawableObject {
+    percentage = 100;
+
+    constructor(type) {
+        super();
+        this.type = type;
+        this.x = 0;
+        this.y = this.getXByType(type);
+        this.width = 250;
+        this.height = 60;
+
+        this.IMAGES = this.getImagesByType(type);
+        this.loadImages(this.IMAGES);
+        this.setPercentage(100);
+    }
+
+    getXByType(type) {
+        if (type == 'health') return 0;
+        if (type == 'sauce') return 50;
+        if (type == 'coins') return 100;
+    }
+
+    getImagesByType(type) {
+        if (type == 'health') {
+            return [
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png',
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/80.png',
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/60.png',
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/40.png',
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
+                'assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png',
+            ];
+        }
+        if (type == 'sauce') {
+            return [
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png',
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/80.png',
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/60.png',
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/40.png',
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/20.png',
+                'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png',
+            ];
+        }
+        if (type == 'coins') {
+            return [
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png',
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/80.png',
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/60.png',
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/40.png',
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/20.png',
+                'assets/img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png',
+            ];
+
+        }
+    }
+
+    setPercentage(percentage) {
+        this.percentage = percentage;
+        let path = this.IMAGES[this.resolveImageIndex()];
+        this.img = this.imageCache[path];
+    }
+
+    resolveImageIndex() {
+        if (this.percentage == 100) return 5;
+        if (this.percentage > 80) return 4;
+        if (this.percentage > 60) return 3;
+        if (this.percentage > 40) return 2;
+        if (this.percentage > 20) return 1;
+        return 0;
+    }
+}
