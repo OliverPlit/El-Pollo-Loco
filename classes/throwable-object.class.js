@@ -1,4 +1,5 @@
 class ThrowableObject extends MovableObject {
+    walkSound = new Audio('./audio/323317__alfrodou__explosion-2.wav');
 
     constructor(x, y) {
         super(); // super() ruft den Konstruktor von MovableObject auf
@@ -13,6 +14,7 @@ class ThrowableObject extends MovableObject {
     throw() {
         this.speedY = 30;
         this.aplyGravity();
+        this.walkSound.play();
         setInterval(() => {
             this.x += 10;
         }, 50);

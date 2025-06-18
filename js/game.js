@@ -3,77 +3,79 @@ let world;
 let keyboard = new Keyboard();
 
 function init() {
-    canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');
-    loadStart(canvas);
+  const canvas = document.getElementById('canvas');
+  ctx = canvas.getContext('2d');
 
-    const button = document.getElementById('startButton');
-    button.addEventListener('click', startGame);
-};
+  startImage = new Image();
+  startImage.src = 'assets/img/9_intro_outro_screens/start/startscreen_1.png';
+  startImage.onload = () => {
+    loadStartScreen();
+  };
 
-
-function drawStartScreenWithOverlay() {
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const startImage = new Image();
-    startImage.src = 'assets/img/9_intro_outro_screens/start/startscreen_1.png';
-    startImage.onload = () => {
-         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
-
-        if (showExplanation) {
-            drawExplanationOverlayBeforeStart(ctx);
-        }
-
-         if (showIntro) {
-            drawIntro(ctx);
-        }
-    };
+  document.getElementById('startButton').addEventListener('click', startGame);
 }
 
-function loadStart() {
-    drawStartScreenWithOverlay(); 
+function loadStartScreen() {
+  drawStartScreen();
 
-    document.getElementById('fullscreen').style.display = 'flex';
-    document.getElementById('audio').style.display = 'flex';
-    document.getElementById('legend').style.display = 'flex';
-    document.getElementById('statement').style.display = 'flex';
+  document.getElementById('fullscreen').style.display = 'flex';
+  document.getElementById('audio').style.display = 'flex';
+  document.getElementById('legend').style.display = 'flex';
+  document.getElementById('statement').style.display = 'flex';
+}
+
+function drawStartScreen() {
+  if (!startImage) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
+
+  if (showExplanation) {
+    drawExplanationOverlayBeforeStart(ctx);
+  }
+
+  if (showIntro) {
+    drawIntro(ctx);
+  }
 }
 
 function startGame() {
-    world = new World(canvas, keyboard);
-    document.getElementById('startButton').style.display = 'none';
-    document.getElementById('fullscreen').style.display = 'none';
-    document.getElementById('legend').style.display = 'none';
-    document.getElementById('statement').style.display = 'none';
-    document.getElementById('pause').style.display = 'flex';
-    document.getElementById('back').style.display = 'flex';
+  // Sicherheit: Falls noch ein Spiel läuft, stoppe es
+  if (world) {
+    world.stopGameLoop();
+    world = null;
+  }
 
+  world = new World(canvas, keyboard);
 
+  document.getElementById('startButton').style.display = 'none';
+  document.getElementById('fullscreen').style.display = 'none';
+  document.getElementById('legend').style.display = 'none';
+  document.getElementById('statement').style.display = 'none';
+  document.getElementById('pause').style.display = 'flex';
+  document.getElementById('back').style.display = 'flex';
+
+  startSound();
 }
 
-
 function backToStart() {
-    if (world) {
-        world.active = false;
-        world = null;
-    }
+  if (world) {
+    world.stopGameLoop();
+    world = null;
+  }
 
-    showExplanation = false;
-    showIntro = false;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawStartScreen();
 
-  
-    init(); 
-
-    
-    document.getElementById('startButton').style.display = 'flex';
-    document.getElementById('fullscreen').style.display = 'flex';
-    document.getElementById('audio').style.display = 'flex';
-    document.getElementById('legend').style.display = 'flex';
-    document.getElementById('statement').style.display = 'flex';
-
-    document.getElementById('pause').style.display = 'none';
-    document.getElementById('back').style.display = 'none';
+  showExplanation = false;
+  showIntro = false;
+  document.getElementById('startButton').style.display = 'flex';
+  document.getElementById('fullscreen').style.display = 'flex';
+  document.getElementById('audio').style.display = 'flex';
+  document.getElementById('legend').style.display = 'flex';
+  document.getElementById('statement').style.display = 'flex';
+  document.getElementById('pause').style.display = 'none';
+  document.getElementById('back').style.display = 'none';
 }
 
 

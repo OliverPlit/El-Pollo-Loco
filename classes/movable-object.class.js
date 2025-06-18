@@ -5,6 +5,7 @@ class MovableObject extends DrawableObject {
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
+    hurtSound = new Audio('./audio/515624__mrickey13__playerhurt2.wav')
 
     aplyGravity() {
         setInterval(() => {
@@ -34,28 +35,26 @@ class MovableObject extends DrawableObject {
     isColliding(mo) {
         return this.x + this.width > mo.x &&
             this.y + this.height > mo.y &&
-            this.x + this.x &&
+       this.x < mo.x + mo.width &&
             this.y < mo.y + mo.height
     }
 
     hit() {
         this.energy -= 5;
-
-
-        if (this.energy > 0) {
+        if (this.energy < 0) {
             this.energy = 0;
         } else {
             this.lastHit = new Date().getTime();
         }
-        //console.log(this.energy); 
+        console.log(this.energy);
     }
 
     isHurt() {
-      let timePassed = new Date().getTime() - this.lastHit;
-       timePassed = timePassed /1000;
-       //console.log(timePassed);
-       
-        return timePassed < 0.5; 
+        let timePassed = new Date().getTime() - this.lastHit;
+        timePassed = timePassed / 1000;
+        //console.log(timePassed);
+        //console.log(this.energy);
+        return timePassed < 2;
     }
 
 

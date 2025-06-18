@@ -3,8 +3,15 @@ body {
     justify-content: center;
     flex-direction: column ;
     margin: 0;
+    font-family: 'zabras';
 }
 
+h1 {
+    z-index: 3;
+    position: absolute;
+    top: 100px;
+    font-size: 30px;
+}
 .fullscreen {
   position: relative;
   width: 100vw;
@@ -26,15 +33,29 @@ body {
 .canva_main_div {
     display: flex;
     justify-content: center;
-   padding-top: 200px;
+   padding-top: 300px;
 }
 
 canvas {
     position: absolute;
     background-color: black;
-    width: 1320px;
+    display: block;
     height: 1080px;
     z-index: 1;
+        font-family: 'zabras';
+
+}
+@media only screen and (max-height: 720px) {
+canvas {
+    width: 100%;
+}
+}
+
+@media only screen and (max-height: 480px) {
+canvas {
+    height: 100vh;
+ 
+}
 }
 
 canvas:fullscreen {
@@ -43,11 +64,9 @@ canvas:fullscreen {
 }
 
 button {
-    position: absolute;
     width: 180px;
     height: 80px;
-    left: 1410px;
-    top: 230px;
+    margin: 10px 300px 30px 0px;
     z-index: 2;
     background-color: #ff9247;
     border: 2px solid white;
@@ -71,7 +90,7 @@ button:hover {
     justify-content: space-between;
     gap: 30px;
     padding-top: 15px;
-    padding-left: 750px;
+    padding-left: 550px;
     z-index: 2;
         img {
             height: 70px;

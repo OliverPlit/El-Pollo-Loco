@@ -1,24 +1,54 @@
 class StatusBar extends DrawableObject {
     percentage = 100;
 
+    IMAGES_STATUSBAR_ENDBOSS = [
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
+        'assets/img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+    ]
+
     constructor(type) {
         super();
         this.type = type;
-        this.x = 0;
         this.y = this.getXByType(type);
+        this.x = this.getYByType(type);
         this.width = 250;
         this.height = 60;
 
         this.IMAGES = this.getImagesByType(type);
         this.loadImages(this.IMAGES);
-        this.setPercentage(100);
+
+        if (type === 'coins') {
+            this.setPercentage(0);
+        } else if (type === 'sauce') {
+            this.setPercentage(70);
+        } else {
+            this.setPercentage(100);
+        }
     }
+
+
+
 
     getXByType(type) {
         if (type == 'health') return 0;
         if (type == 'sauce') return 50;
         if (type == 'coins') return 100;
+        if (type == 'endboss') return 0;
     }
+
+    getYByType(type) {
+           if (type == 'health') return 0;
+        if (type == 'sauce') return 0;
+        if (type == 'coins') return 0;
+if (type == 'endboss') return 300;
+    }
+
+
+
 
     getImagesByType(type) {
         if (type == 'health') {
@@ -52,20 +82,32 @@ class StatusBar extends DrawableObject {
             ];
 
         }
+        if (type == 'endboss') {
+            return [
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+            ];
+        }
     }
 
-    setPercentage(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES[this.resolveImageIndex()];
-        this.img = this.imageCache[path];
-    }
 
-    resolveImageIndex() {
-        if (this.percentage == 100) return 5;
-        if (this.percentage > 80) return 4;
-        if (this.percentage > 60) return 3;
-        if (this.percentage > 40) return 2;
-        if (this.percentage > 20) return 1;
-        return 0;
-    }
+
+setPercentage(percentage) {
+    this.percentage = percentage;
+    let path = this.IMAGES[this.resolveImageIndex()];
+    this.img = this.imageCache[path];
+}
+
+resolveImageIndex() {
+    if (this.percentage == 100) return 5;
+    if (this.percentage > 80) return 4;
+    if (this.percentage > 60) return 3;
+    if (this.percentage > 40) return 2;
+    if (this.percentage > 20) return 1;
+    return 0;
+}
 }
