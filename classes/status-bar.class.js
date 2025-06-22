@@ -1,6 +1,5 @@
 class StatusBar extends DrawableObject {
     percentage = 100;
-
     IMAGES_STATUSBAR_ENDBOSS = [
         'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
         'assets/img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
@@ -12,6 +11,7 @@ class StatusBar extends DrawableObject {
 
     constructor(type) {
         super();
+
         this.type = type;
         this.y = this.getXByType(type);
         this.x = this.getYByType(type);
@@ -24,7 +24,7 @@ class StatusBar extends DrawableObject {
         if (type === 'coins') {
             this.setPercentage(0);
         } else if (type === 'sauce') {
-            this.setPercentage(70);
+            this.setPercentage(0);
         } else {
             this.setPercentage(100);
         }
@@ -37,14 +37,12 @@ class StatusBar extends DrawableObject {
         if (type == 'health') return 0;
         if (type == 'sauce') return 50;
         if (type == 'coins') return 100;
-        if (type == 'endboss') return 0;
     }
 
     getYByType(type) {
            if (type == 'health') return 0;
         if (type == 'sauce') return 0;
         if (type == 'coins') return 0;
-if (type == 'endboss') return 300;
     }
 
 
@@ -84,12 +82,12 @@ if (type == 'endboss') return 300;
         }
         if (type == 'endboss') {
             return [
-                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
-                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
-                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
-                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
-                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
                 'assets/img/7_statusbars/2_statusbar_endboss/blue/blue100.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue80.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue60.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue40.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue20.png',
+                'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
             ];
         }
     }

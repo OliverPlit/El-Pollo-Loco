@@ -8,7 +8,6 @@ class World {
     statusBarHealth = new StatusBar('health');
     statusBarBottles = new StatusBar('sauce');
     statusBarCoins = new StatusBar('coins');
-    statusBarEndboss = new StatusBar('endboss');
     endboss = new Endboss();
     throwableObjects = [];
     coins = [];
@@ -16,10 +15,12 @@ class World {
     paused = false;
     active = true;
     gameOver = false;
-
+    gameWin = false;
+    lastBottleThrowTime = 0;
+    loseSound = new Audio('./audio/350987__cabled_mess__lose_c_05.wav');
+    winSound = new Audio('./audio/270545__littlerobotsoundfactory__jingle_win_01.wav');
     coinSound = new Audio('./audio/402767__lilmati__retro-coin-03.wav');
-    collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav')
-
+    collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -31,8 +32,16 @@ class World {
         this.generateBottles();
         this.assignWorldToEnemies()
         this.run();
-    }
+        this.muteSounds();
 
+
+    }
+    muteSounds() {
+        window.soundManager.addSound(this.coinSound);
+        window.soundManager.addSound(this.collectBottle);
+        window.soundManager.addSound(this.winSound);
+        window.soundManager.addSound(this.loseSound);
+    }
 
     assignWorldToEnemies() {
         this.level.enemies.forEach(enemy => {
@@ -89,55 +98,53 @@ class World {
     }
 
     run() {
-       this.checkCollisionsInterval = setInterval(() => {
-    this.checkCollsions();
-    this.checkThrowObjects();
-  }, 100);
+        this.checkCollisionsInterval = setInterval(() => {
+            this.checkCollsions();
+            this.checkThrowObjects();
+        }, 100);
     }
 
 
     checkThrowObjects() {
-        if (this.keyboard.D && this.character.bottles > 0) {
+        const now = new Date().getTime();
+        const cooldown = 1000;
+
+        if (this.keyboard.D && this.character.bottles > 0 && now - this.lastBottleThrowTime > cooldown) {
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
             this.throwableObjects.push(bottle);
 
             this.character.bottles--;
             let percentage = (this.character.bottles / 20) * 100;
             this.statusBarBottles.setPercentage(percentage);
+
+            this.lastBottleThrowTime = now;
         }
     }
 
     draw() {
+
         if (this.paused || !this.active) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
-        if (this.gameOver) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            this.ctx.drawImage(this.character.loseImage, -400, 0, this.canvas.width, this.canvas.height);
-            return;
-        }
-        this.endboss.updateEnemies(this.character.x);
+
+        this.closeGameBecauseWin();
+        this.endboss.animate();
         console.log(this.character.x);
-        
+
         this.addObjectsToMap(this.level.backgroundObjects);
         this.ctx.translate(-this.camera_x, 0)
         this.addtoMap(this.statusBarHealth);
         this.addtoMap(this.statusBarBottles);
         this.addtoMap(this.statusBarCoins);
-        this.addtoMap(this.statusBarEndboss);
+        this.addtoMap(this.endboss.statusBar);
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addtoMap(this.character);
-
         this.addObjectsToMap(this.throwableObjects);
         this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.bottles);
-
-
         this.ctx.translate(-this.camera_x, 0)
-
-
 
         if (this.showIntro) {
             this.drawExplanationOverlay();
@@ -150,7 +157,40 @@ class World {
 
     }
 
+    closeGameBecauseWin() {
+        let windowBack = document.getElementById('window_back');
+        let backgroundSound = document.getElementById('startSound');
+        if (this.gameWin) {
+            let windowBack = document.getElementById('window_back')
 
+            this.ctx.translate(-this.camera_x, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.ctx.drawImage(this.character.winImage, 0, 0, this.canvas.width, this.canvas.height);
+            this.winSound.play();
+
+            this.ctx.restore();
+            this.stopGameLoop();
+            setTimeout(() => {
+                windowBack.style.display = 'flex'
+            }, 1000); return;
+        }
+    }
+
+    closeGameBecauseLose() {
+        let windowBack = document.getElementById('window_back');
+        let backgroundSound = document.getElementById('startSound');
+        if (this.gameOver) {
+            this.ctx.translate(-this.camera_x, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.loseSound.play();
+            backgroundSound.pause();
+            setTimeout(() => {
+                windowBack.style.display = 'flex'
+            }, 1000);
+            this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
+            return;
+        }
+    }
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addtoMap(o)
@@ -170,68 +210,100 @@ class World {
         }
     }
 
-stopGameLoop() {
-  if (this.checkCollisionsInterval) {
-    clearInterval(this.checkCollisionsInterval);
-    this.checkCollisionsInterval = null;
-  }
+    stopGameLoop() {
+        if (this.checkCollisionsInterval) {
+            clearInterval(this.checkCollisionsInterval);
+            this.checkCollisionsInterval = null;
+        }
 
-  this.active = false;
+        this.active = false;
+    }
+
+    resumeGameLoop() {
+        if (!this.checkCollisionsInterval) {
+            this.run();
+        }
+        this.active = true;
+    }
+
+    checkCollisions() {
+    this.checkEnemyCollisions();
+    this.checkThrowableObjectCollisions();
+    this.checkCoinCollisions();
+    this.checkBottleCollisions();
 }
 
-resumeGameLoop() {
-    if (!this.checkCollisionsInterval) {
-      this.run();
-    }
-    this.active = true;
-  }
+checkEnemyCollisions() {
+    this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+            const cBox = this.character.getHitBox();
+            const eBox = enemy.getHitBox();
 
-    checkCollsions() {
-       this.level.enemies.forEach((enemy) => {
-  if (this.character.isColliding(enemy)) {
-    if (this.character.y + this.character.height <= enemy.y + 10) {
-      enemy.energy = 0;
-      this.character.speedY = -100;
-    } else if (enemy.energy > 0) {
-      let now = new Date().getTime();
-      let timePassed = (now - this.character.lastHit) / 1000;
+            const isJumpingOnEnemy =
+                this.character.speedY < 0 &&
+                cBox.bottom <= eBox.top + (enemy.height / 2);
 
-      if (timePassed > 2 || this.character.lastHit === 0) {
-        this.character.hit();
-        this.statusBarHealth.setPercentage(this.character.energy);
-      }
-    }
-  }
+            if (isJumpingOnEnemy) {
+                enemy.energy = 0;
+                this.character.speedY = 25;
+                this.character.y = 155; 
+            } else if (enemy.energy > 0) {
+                let now = new Date().getTime();
+                let timePassed = (now - this.character.lastHit) / 1000;
 
-  this.throwableObjects.forEach((throwableObject) => {
-    if (enemy.isColliding(throwableObject)) {
-      enemy.energy = 0;
-    }
-  });
-});
+                if (timePassed > 2 || this.character.lastHit === 0) {
+                    this.character.hit();
+                    this.statusBarHealth.setPercentage(this.character.energy);
+                }
+            }
+        }
+    });
+}
 
-        this.coins.forEach((coin, index) => {
-            if (this.character.isColliding(coin)) {
-                this.coins.splice(index, 1);
-                this.character.coins += 1;
-                this.coinSound.play();
-                let percentage = this.character.coins * 5;
-                if (percentage > 100) percentage = 100;
-                this.statusBarCoins.setPercentage(percentage);
+checkThrowableObjectCollisions() {
+    this.level.enemies.forEach((enemy) => {
+        this.throwableObjects.forEach((throwableObject, tIndex) => {
+            if (enemy.isColliding(throwableObject)) {
+                if (enemy instanceof Endboss) {
+                    enemy.hitByBottle();
+                } else {
+                    enemy.energy = 0;
+                }
+
+                this.throwableObjects.splice(tIndex, 1);
             }
         });
-        this.bottles.forEach((bottle, index) => {
-            if (this.character.isColliding(bottle)) {
-                this.bottles.splice(index, 1);
-                this.character.bottles += 5;
-                this.collectBottle.play();
+    });
+}
 
-                let percentage = this.character.bottles * 5;
-                if (percentage > 100) percentage = 100;
-                this.statusBarBottles.setPercentage(percentage);
-            }
-        });
-    }
+checkCoinCollisions() {
+    this.coins.forEach((coin, index) => {
+        if (this.character.isColliding(coin)) {
+            this.coins.splice(index, 1);
+            this.character.coins += 1;
+            this.coinSound.play();
+
+            let percentage = this.character.coins * 5;
+            if (percentage > 100) percentage = 100;
+            this.statusBarCoins.setPercentage(percentage);
+        }
+    });
+}
+
+checkBottleCollisions() {
+    this.bottles.forEach((bottle, index) => {
+        if (this.character.isColliding(bottle)) {
+            this.bottles.splice(index, 1);
+            this.character.bottles += 5;
+            this.collectBottle.play();
+
+            let percentage = this.character.bottles * 5;
+            if (percentage > 100) percentage = 100;
+            this.statusBarBottles.setPercentage(percentage);
+        }
+    });
+}
+
 
     flipImage(mo) {
         this.ctx.save();

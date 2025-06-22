@@ -1,10 +1,11 @@
 class Character extends MovableObject {
     height = 280;
     y = 155;
+    x = 20;
     speed = 10;
     coins = 0;
     bottles = 20;
-    walkSound = new Audio('./audio/537180__colorscrimsontears__walking-on-sand-and-gravel.wav');
+    walkSound = new Audio('./audio/263006__dermotte__giant_step_1.wav');
     jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
     IMAGES_WALKING = [
         './assets/img/2_character_pepe/2_walk/W-21.png',
@@ -46,7 +47,6 @@ class Character extends MovableObject {
         'assets/img/2_character_pepe/4_hurt/H-43.png',
 
     ]
-
     world;
 
     constructor() {
@@ -55,9 +55,27 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        this.aplyGravity();
+        this.applyGravity();
         this.loseImage = new Image();
         this.loseImage.src = './assets/img/9_intro_outro_screens/game_over/game over!.png';
+        this.winImage = new Image();
+        this.winImage.src = './assets/img/You won, you lost/You Win A.png';
+this.muteSounds()
+
+        this.offset = {
+            top: 101,
+            bottom: 10,
+            left: 10,
+            right: 15
+        };
+
+    
+    }
+         
+    muteSounds() {
+         window.soundManager.addSound(this.jumpSound);
+       window.soundManager.addSound(this.walkSound);
+       
     }
 
     animate() {

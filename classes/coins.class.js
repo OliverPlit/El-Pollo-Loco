@@ -1,6 +1,6 @@
-class Coins extends DrawableObject {
+class Coins extends MovableObject {
 
-    y = 300;
+    y = 200;
     x = 250;
     width = 100;
     height = 100;
@@ -15,7 +15,12 @@ class Coins extends DrawableObject {
         super();
         this.loadImage(this.IMAGES_COINS);
 
-
+this.offset = {
+            top: 30,
+            bottom: 30,
+            left: 30,
+            right: 30
+        };
     }
 
 /**draw(ctx) {

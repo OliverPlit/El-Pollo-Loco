@@ -2,11 +2,17 @@ class YellowChicken extends MovableObject {
     height = 70;
     width = 80;
     y = 370;
-    speedY = 30;
+    speedY = 20;
+    energy = 1;
+    isDead = false;
     IMAGES_WALKING = [
         './assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         './assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         './assets/img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
+    ];
+
+    IMAGES_DEAD = [
+        './assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ]
     constructor() {
         super().loadImage('./assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
@@ -15,7 +21,7 @@ class YellowChicken extends MovableObject {
         this.speed = 1.55 + Math.random() * 0.25;
         this.animate();
         this.jump();
-        this.aplyGravity();
+        this.applyGravity();
         this.jumpLoop();
 
     }
@@ -28,15 +34,34 @@ class YellowChicken extends MovableObject {
         return this.y < 370;
     }
 
-    animate() {
+       animate() {
         setInterval(() => {
             this.moveLeft();
         }, 1000 / 60)
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            if ((this.energy > 0)) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+            
 
         }, 100);
+       setInterval(() => {
+    if (this.energy == 0 && !this.isDead) {
+        this.loadImage(this.IMAGES_DEAD[0]);
+        this.isDead = true;
+
+        setTimeout(() => {
+            let index = this.world.level.enemies.indexOf(this);
+            if (index > -1) {
+                this.world.level.enemies.splice(index, 1);
+            }
+        }, 1000);
     }
+}, 100);
+        console.log(this.energy);
+        
+    }
+
 
     jumpLoop() {
         setInterval(() => {

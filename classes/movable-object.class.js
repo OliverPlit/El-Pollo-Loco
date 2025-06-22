@@ -5,9 +5,15 @@ class MovableObject extends DrawableObject {
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
+
     hurtSound = new Audio('./audio/515624__mrickey13__playerhurt2.wav')
 
-    aplyGravity() {
+    constructor() {
+        super();
+               window.soundManager.addSound(this.hurtSound);
+
+    }
+    applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY
@@ -17,7 +23,7 @@ class MovableObject extends DrawableObject {
     }
 
     jump() {
-        this.speedY = 30;
+        this.speedY = 20;
 
     }
 
@@ -30,17 +36,29 @@ class MovableObject extends DrawableObject {
     }
 
 
+getHitBox() {
+    return {
+        left: this.x + (this.offset?.left || 0),
+        right: this.x + this.width - (this.offset?.right || 0),
+        top: this.y + (this.offset?.top || 0),
+        bottom: this.y + this.height - (this.offset?.bottom || 0)
+    };
+}
 
+   isColliding(mo) {
+    const a = this.getHitBox();
+    const b = mo.getHitBox();
 
-    isColliding(mo) {
-        return this.x + this.width > mo.x &&
-            this.y + this.height > mo.y &&
-       this.x < mo.x + mo.width &&
-            this.y < mo.y + mo.height
-    }
+    return (
+        a.right > b.left &&
+        a.left < b.right &&
+        a.bottom > b.top &&
+        a.top < b.bottom
+    );
+}
 
     hit() {
-        this.energy -= 5;
+        this.energy -= 10;
         if (this.energy < 0) {
             this.energy = 0;
         } else {

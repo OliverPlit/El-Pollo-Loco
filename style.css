@@ -1,7 +1,7 @@
 body {
     display: flex;
     justify-content: center;
-    flex-direction: column ;
+    flex-direction: column;
     margin: 0;
     font-family: 'zabras';
 }
@@ -12,28 +12,67 @@ h1 {
     top: 100px;
     font-size: 30px;
 }
+
 .fullscreen {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .background_img {
-  position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
 }
 
+.window_for_back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+
+    .button_lose {
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        flex-direction: row;
+    }
+
+    .again {
+        background-color: green;
+        color: white;
+        margin: 0;
+
+
+    }
+
+    .home {
+        background-color: red;
+        color: white;
+        margin: 0;
+
+    }
+}
 
 .canva_main_div {
     display: flex;
     justify-content: center;
-   padding-top: 300px;
+    padding-top: 300px;
 }
 
 canvas {
@@ -42,20 +81,21 @@ canvas {
     display: block;
     height: 1080px;
     z-index: 1;
-        font-family: 'zabras';
+    font-family: 'zabras';
 
 }
+
 @media only screen and (max-height: 720px) {
-canvas {
-    width: 100%;
-}
+    canvas {
+        width: 100%;
+    }
 }
 
 @media only screen and (max-height: 480px) {
-canvas {
-    height: 100vh;
- 
-}
+    canvas {
+        height: 100vh;
+
+    }
 }
 
 canvas:fullscreen {
@@ -64,6 +104,8 @@ canvas:fullscreen {
 }
 
 button {
+            font-family: 'zabras';
+
     width: 180px;
     height: 80px;
     margin: 10px 300px 30px 0px;
@@ -92,10 +134,11 @@ button:hover {
     padding-top: 15px;
     padding-left: 550px;
     z-index: 2;
-        img {
-            height: 70px;
-            width: 70px;
-        }
+
+    img {
+        height: 70px;
+        width: 70px;
+    }
 }
 
 

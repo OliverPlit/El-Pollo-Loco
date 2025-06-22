@@ -1,5 +1,5 @@
 class Endboss extends MovableObject {
-
+x = 3200;
     height = 400;
     width = 250;
     y = 60;
@@ -36,47 +36,144 @@ class Endboss extends MovableObject {
 
     ];
 
-    alertShow = false;
+    IMAGE_DEAD = [
+        'assets/img/4_enemie_boss_chicken/5_dead/G24.png'
+    ]
+
+    alertShown = false;
     state = 'normal';
 
-    constructor() {
+    constructor(world) {
         super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
+        this.statusBar = new StatusBar('endboss');
+this.speed = 3;
+    this.world = world; // world übergeben und merken
 
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
-        this.x = 3200;
+        this.animate();
+this.updateStatusBarPosition()
         this.animateCurrentState();
     }
+ animate() {
+        setInterval(() => {
+            this.moveLeft();
+        }, 1000 / 60)
+        setInterval(() => {
+            if ((this.energy > 0)) {
+                this.playAnimation(this.IMAGES_WALKING);
+                console.log(this.energy);
+                
+            }
+            
 
-    updateEnemies(characterX) {
-        if (characterX >= 2800 && this.state === 'normal' && !this.alertShown) {
-            this.startAlertSequence();
+        }, 100);
+    }
+
+    hitByBottle() {
+    if (this.energy > 0 && !this.isDead) {
+        this.energy -= 1;
+
+        if (this.energy < 0) {
+            this.energy = 0;
         }
 
-        this.animateCurrentState();
+        this.statusBar.setPercentage(this.energy * 2); // 50 HP → 100%
+    }
+}
+
+
+    draw(ctx) {
+        super.draw(ctx);
+        this.statusBar.draw(ctx);
+    }
+    updateStatusBarPosition() {
+        this.statusBar.x = this.x + this.width / 2 - this.statusBar.width / 2;
+        this.statusBar.y = this.y - 30;
     }
 
-    startAlertSequence() {
-        this.state = 'alert';
-        this.alertShown = true;
+    playAnimation(images) {
+    clearInterval(this.animationInterval); // Vorherige Animation stoppen
+    let i = 0;
+    this.animationInterval = setInterval(() => {
+        this.img = this.imageCache[images[i]];
+        i = (i + 1) % images.length;
+    }, 100); // alle 100ms neues Bild
+}
 
-        this.playAnimation(this.IMAGES_ALERT);
-        setTimeout(() => {
-            this.state = 'attack';
-            this.playAnimation(this.IMAGES_ATTACK);
-
-            setTimeout(() => {
-                this.state = 'walking';
-                this.playAnimation(this.IMAGES_WALKING);
-            }, 2000);
-
-        }, 2000);
-    }
 
     animateCurrentState() {
+   if (this.state === 'alert') {
+    this.playAnimation(this.IMAGES_ALERT);
+} else if (this.state === 'attack') {
+    this.playAnimation(this.IMAGES_ATTACK);
+        this.playAnimation(this.IMAGES_WALKING);
+
+        this.moveLeft();
+
+} else if (this.state === 'walking') {
+    this.moveLeft();
+}
+}
+
+
+ animate() {
+    setInterval(() => {
+        if (this.energy <= 0) return;
+
+        if (!this.alertShown && this.world?.character?.x >= 2800) {
+            this.alertShown = true;
+            this.state = 'alert';
+            this.animationFrame = 0;
+            this.stateStartTime = Date.now();
+        }
+
+        if (this.state === 'alert' && Date.now() - this.stateStartTime > 2000) {
+            this.state = 'attack';
+            this.animationFrame = 0;
+            this.stateStartTime = Date.now();
+        }
+
+        if (this.state === 'attack' && Date.now() - this.stateStartTime > 2000) {
+            this.state = 'walking';
+            this.animationFrame = 0;
+            this.stateStartTime = Date.now();
+        }
+
+        // Animation abspielen
+        let images;
+        if (this.state === 'alert') images = this.IMAGES_ALERT;
+        else if (this.state === 'attack') images = this.IMAGES_ATTACK;
+        else images = this.IMAGES_WALKING;
+
+        this.img = this.imageCache[images[this.animationFrame]];
+        this.animationFrame = (this.animationFrame + 1) % images.length;
+
         if (this.state === 'walking') {
             this.moveLeft();
         }
+
+        this.updateStatusBarPosition();
+
+    }, 50);
+    setInterval(() => {
+        if (this.energy == 0 && !this.isDead) {
+            this.loadImage(this.IMAGES_DEAD);
+            this.isDead = true;
+            this.world.gameWin = true;
+
+            setTimeout(() => {
+                let index = this.world.level.enemies.indexOf(this);
+                if (index > -1) {
+                    this.world.level.enemies.splice(index, 1);
+                }
+            }, 1000);
+        }
+    }, 50);
+}
+
+    showWin() {
+
     }
 }
