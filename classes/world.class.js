@@ -99,7 +99,7 @@ class World {
 
     run() {
         this.checkCollisionsInterval = setInterval(() => {
-            this.checkCollsions();
+            this.checkCollisions();
             this.checkThrowObjects();
         }, 100);
     }
@@ -126,8 +126,15 @@ class World {
         if (this.paused || !this.active) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
+  if (this.gameOver) {
+        this.closeGameBecauseLose();
+        return;
+    }
 
+    if (this.gameWin) {
         this.closeGameBecauseWin();
+        return;
+    }
         this.endboss.animate();
         console.log(this.character.x);
 
@@ -180,6 +187,8 @@ class World {
         let windowBack = document.getElementById('window_back');
         let backgroundSound = document.getElementById('startSound');
         if (this.gameOver) {
+                    this.character.stopSounds();
+
             this.ctx.translate(-this.camera_x, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             this.loseSound.play();

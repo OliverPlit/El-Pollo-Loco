@@ -58,7 +58,8 @@ function drawIntro(ctx) {
     ctx.fillText('Ein Taco-Liebhaber, ein Sombrero-Träger,', 80, 170);
     ctx.fillText('ein ruhiger Zeitgenosse mit einem kleinen Hühnerhof.', 80, 200);
     ctx.fillText('Alles war gut – bis sie kamen.', 80, 230);
-    ctx.fillText('Die verrückten Hühner angeführt vom Oberhuhn Gallino rebellierten.', 80, 260);
+    ctx.fillText('Die verrückten Hühner angeführt vom ', 80, 260);
+    ctx.fillText('Oberhuhn Gallino rebellierten.', 80, 290);
 }
 
 function startSound() {

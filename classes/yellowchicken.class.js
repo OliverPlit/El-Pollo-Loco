@@ -5,6 +5,7 @@ class YellowChicken extends MovableObject {
     speedY = 20;
     energy = 1;
     isDead = false;
+    isDeadSound = new Audio('audio/11568__samplecat__squeak-duck4.wav')
     IMAGES_WALKING = [
         './assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         './assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
@@ -23,10 +24,14 @@ class YellowChicken extends MovableObject {
         this.jump();
         this.applyGravity();
         this.jumpLoop();
+        this.muteSounds();
 
     }
 
-
+muteSounds() {
+        window.soundManager.addSound(this.isDeadSound);
+        
+    }
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true;
@@ -48,6 +53,7 @@ class YellowChicken extends MovableObject {
        setInterval(() => {
     if (this.energy == 0 && !this.isDead) {
         this.loadImage(this.IMAGES_DEAD[0]);
+        this.isDeadSound.play();
         this.isDead = true;
 
         setTimeout(() => {

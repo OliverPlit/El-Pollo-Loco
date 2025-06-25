@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>l pollo loco</title>
+    <link rel="shortcut icon" href="./assets/img/icons/chicken_9339272.png" type="image/x-icon">
+    <title>El pollo loco</title>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./responsive.css">
+    <link rel="stylesheet" href="./mobile.css">
     <style>
         @font-face {
             font-family: 'zabras';
@@ -37,7 +40,6 @@
 
     <script src="./levels/level1.js"></script>
     <script src="./js/game.js"></script>
-    <script src="./template.js"></script>
 
 </head>
 
@@ -73,20 +75,25 @@
                 <img id="back" src="./assets/img/icons/back-button.png" alt="" style="display: none;"
                     onclick="backToStart()">
             </div>
-
+            <div id="mobileControls">
+                <button onclick="pressKey('LEFT')">←</button>
+                <button onclick="pressKey('J')">J</button>
+                <button onclick="pressKey('SPACE')">Space</button>
+                <button onclick="pressKey('RIGHT')">→</button>
+            </div>
         </div>
         <div id="window_back" class="window_for_back" style="display: none;">
             <div class="button_lose">
                 <button class="again" onclick="startGame()">Play Again</button>
-                <button class="home"onclick = "backToStart()">Home</button>
+                <button class="home" onclick="backToStart()">Home</button>
             </div>
         </div>
         <h4>LegalNotice</h4>
     </div>
 
-<audio src="./audio/chill-gaming-vibes-332248.mp3" id="startSound"></audio>
+    <audio src="./audio/chill-gaming-vibes-332248.mp3" id="startSound"></audio>
 
 </body>
-    <script src="./script.js"></script>
+<script src="./script.js"></script>
 
 </html>

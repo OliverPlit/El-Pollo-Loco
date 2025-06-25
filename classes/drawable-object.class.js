@@ -17,15 +17,13 @@ class DrawableObject {
     }
 
     ctx.beginPath();
-    ctx.lineWidth = "2";
-    ctx.strokeStyle = "blue";
+    
     ctx.rect(
         this.x + (this.offset?.left || 0),
         this.y + (this.offset?.top || 0),
         this.width - (this.offset?.left || 0) - (this.offset?.right || 0),
         this.height - (this.offset?.top || 0) - (this.offset?.bottom || 0)
     );
-    ctx.stroke();
 }
 
 

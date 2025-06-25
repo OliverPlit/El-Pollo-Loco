@@ -20,7 +20,7 @@ class ThrowableObject extends MovableObject {
 
 
     constructor(x, y) {
-        super(); // super() ruft den Konstruktor von MovableObject auf
+        super();
         this.loadImage('./assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
     this.loadImages(this.IMAGE_BOTTLE_ROTATE);
     this.loadImages(this.IMAGE_BOTTLE_CRASH)

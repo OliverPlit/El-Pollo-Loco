@@ -142,5 +142,19 @@ window.addEventListener('keyup', (event) => {
 });
 
 
-
+    function pressKey(key) {
+      if (!window.keyboard) return;
+      switch (key) {
+        case 'LEFT': window.keyboard.LEFT = true; break;
+        case 'RIGHT': window.keyboard.RIGHT = true; break;
+        case 'J': window.keyboard.D = true; break;
+        case 'SPACE': window.keyboard.SPACE = true; break;
+      }
+      setTimeout(() => {
+        if (key === 'LEFT') window.keyboard.LEFT = false;
+        if (key === 'RIGHT') window.keyboard.RIGHT = false;
+        if (key === 'J') window.keyboard.D = false;
+        if (key === 'SPACE') window.keyboard.SPACE = false;
+      }, 200);
+    }
 

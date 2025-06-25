@@ -1,10 +1,11 @@
 class Endboss extends MovableObject {
-x = 3200;
+    x = 3200;
     height = 400;
     width = 250;
     y = 60;
     energy = 50;
     isDead = false;
+    alertSound = ('./audio/482009__ricratio__rooster-2018-12-25.wav')
 
     IMAGES_ALERT = [
         './assets/img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -46,17 +47,29 @@ x = 3200;
     constructor(world) {
         super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
         this.statusBar = new StatusBar('endboss');
-this.speed = 3;
-    this.world = world; // world übergeben und merken
+        this.speed = 3;
+        this.world = world;
 
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.animate();
-this.updateStatusBarPosition()
+        this.updateStatusBarPosition()
         this.animateCurrentState();
+        this.isDeadmuteSounds();
+        this.offset = {
+            top: 0,
+            bottom: 30,
+            left: 45,
+            right: 0
+        };
     }
- animate() {
+
+    isDeadmuteSounds() {
+        window.soundManager.addSound(this.alertSound);
+
+    }
+    animate() {
         setInterval(() => {
             this.moveLeft();
         }, 1000 / 60)
@@ -64,24 +77,24 @@ this.updateStatusBarPosition()
             if ((this.energy > 0)) {
                 this.playAnimation(this.IMAGES_WALKING);
                 console.log(this.energy);
-                
+
             }
-            
+
 
         }, 100);
     }
 
     hitByBottle() {
-    if (this.energy > 0 && !this.isDead) {
-        this.energy -= 1;
+        if (this.energy > 0 && !this.isDead) {
+            this.energy -= 1;
 
-        if (this.energy < 0) {
-            this.energy = 0;
+            if (this.energy < 0) {
+                this.energy = 0;
+            }
+
+            this.statusBar.setPercentage(this.energy * 2); // 50 HP → 100%
         }
-
-        this.statusBar.setPercentage(this.energy * 2); // 50 HP → 100%
     }
-}
 
 
     draw(ctx) {
@@ -94,84 +107,87 @@ this.updateStatusBarPosition()
     }
 
     playAnimation(images) {
-    clearInterval(this.animationInterval); // Vorherige Animation stoppen
-    let i = 0;
-    this.animationInterval = setInterval(() => {
-        this.img = this.imageCache[images[i]];
-        i = (i + 1) % images.length;
-    }, 100); // alle 100ms neues Bild
-}
+        clearInterval(this.animationInterval); // Vorherige Animation stoppen
+        let i = 0;
+        this.animationInterval = setInterval(() => {
+            this.img = this.imageCache[images[i]];
+            i = (i + 1) % images.length;
+        }, 100); 
+    }
 
 
     animateCurrentState() {
-   if (this.state === 'alert') {
-    this.playAnimation(this.IMAGES_ALERT);
-} else if (this.state === 'attack') {
-    this.playAnimation(this.IMAGES_ATTACK);
-        this.playAnimation(this.IMAGES_WALKING);
+        if (this.state === 'alert') {
+            this.playAnimation(this.IMAGES_ALERT);
 
-        this.moveLeft();
-
-} else if (this.state === 'walking') {
-    this.moveLeft();
-}
-}
+        } else if (this.state === 'attack') {
+            this.playAnimation(this.IMAGES_ATTACK);
+            this.playAnimation(this.IMAGES_WALKING);
+            this.alertSound.play();
 
 
- animate() {
-    setInterval(() => {
-        if (this.energy <= 0) return;
+            this.moveLeft();
 
-        if (!this.alertShown && this.world?.character?.x >= 2800) {
-            this.alertShown = true;
-            this.state = 'alert';
-            this.animationFrame = 0;
-            this.stateStartTime = Date.now();
-        }
-
-        if (this.state === 'alert' && Date.now() - this.stateStartTime > 2000) {
-            this.state = 'attack';
-            this.animationFrame = 0;
-            this.stateStartTime = Date.now();
-        }
-
-        if (this.state === 'attack' && Date.now() - this.stateStartTime > 2000) {
-            this.state = 'walking';
-            this.animationFrame = 0;
-            this.stateStartTime = Date.now();
-        }
-
-        // Animation abspielen
-        let images;
-        if (this.state === 'alert') images = this.IMAGES_ALERT;
-        else if (this.state === 'attack') images = this.IMAGES_ATTACK;
-        else images = this.IMAGES_WALKING;
-
-        this.img = this.imageCache[images[this.animationFrame]];
-        this.animationFrame = (this.animationFrame + 1) % images.length;
-
-        if (this.state === 'walking') {
+        } else if (this.state === 'walking') {
             this.moveLeft();
         }
+    }
 
-        this.updateStatusBarPosition();
 
-    }, 50);
-    setInterval(() => {
-        if (this.energy == 0 && !this.isDead) {
-            this.loadImage(this.IMAGES_DEAD);
-            this.isDead = true;
-            this.world.gameWin = true;
+    animate() {
+        setInterval(() => {
+            if (this.energy <= 0) return;
 
-            setTimeout(() => {
-                let index = this.world.level.enemies.indexOf(this);
-                if (index > -1) {
-                    this.world.level.enemies.splice(index, 1);
-                }
-            }, 1000);
-        }
-    }, 50);
-}
+            if (!this.alertShown && this.world?.character?.x >= 2800) {
+                this.alertShown = true;
+                this.state = 'alert';
+                this.animationFrame = 0;
+                this.stateStartTime = Date.now();
+            }
+
+            if (this.state === 'alert' && Date.now() - this.stateStartTime > 2000) {
+                this.state = 'attack';
+                this.animationFrame = 0;
+                this.stateStartTime = Date.now();
+            }
+
+            if (this.state === 'attack' && Date.now() - this.stateStartTime > 2000) {
+                this.state = 'walking';
+                this.animationFrame = 0;
+                this.stateStartTime = Date.now();
+            }
+
+            // Animation abspielen
+            let images;
+            if (this.state === 'alert') images = this.IMAGES_ALERT;
+            else if (this.state === 'attack') images = this.IMAGES_ATTACK;
+            else images = this.IMAGES_WALKING;
+
+            this.img = this.imageCache[images[this.animationFrame]];
+            this.animationFrame = (this.animationFrame + 1) % images.length;
+
+            if (this.state === 'walking') {
+                this.moveLeft();
+            }
+
+            this.updateStatusBarPosition();
+
+        }, 100);
+        setInterval(() => {
+            if (this.energy == 0 && !this.isDead) {
+                this.loadImage(this.IMAGES_DEAD);
+                this.isDead = true;
+                this.world.gameWin = true;
+
+                setTimeout(() => {
+                    let index = this.world.level.enemies.indexOf(this);
+                    if (index > -1) {
+                        this.world.level.enemies.splice(index, 1);
+                    }
+                }, 1000);
+            }
+        }, 50);
+    }
 
     showWin() {
 
