@@ -112,10 +112,7 @@ canvas {
 
 
 button {
-    position: relative;
-    top: 10px;
     font-family: 'zabras';
-
     width: 90px;
     height: 40px;
     z-index: 2;

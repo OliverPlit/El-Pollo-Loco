@@ -90,7 +90,7 @@ function toggleAudio() {
 
 function showButton() {
     const btn = document.getElementById('backToHome');
-    btn.style.display = 'flex';
+   // btn.style.display = 'flex';
     btn.addEventListener('click', startGame);
 }
 
@@ -98,17 +98,16 @@ function stopGameplay() {
     const pauseImg = document.getElementById('pause');
     if (!world) return;
 
-    const isPaused = pauseImg.src.endsWith('pause.png');
+const isPaused = pauseImg.src.endsWith('play.png');
+pauseImg.src = isPaused ? './assets/img/icons/pause.png' : './assets/img/icons/play.png';
 
-    pauseImg.src = isPaused ? './assets/img/icons/play.png' : './assets/img/icons/pause.png';
+if (isPaused) {
+    world.resumeGameLoop();
+} else {
+    world.stopGameLoop();
+}
 
-    if (isPaused) {
-        world.stopGameLoop();
-    } else {
-        world.resumeGameLoop();
-    }
-
-    world.paused = !isPaused;
+world.paused = isPaused;
 }
 
 

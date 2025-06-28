@@ -4,19 +4,18 @@ class Coins extends MovableObject {
     x = 250;
     width = 100;
     height = 100;
-    animationTime = 0;
 
 
     IMAGES_COINS = [
-        'assets/img/8_coin/coin_1.png',
-        'assets/img/8_coin/coin_2.png'
+        './assets/img/8_coin/coin_1.png',
+        './assets/img/8_coin/coin_2.png'
 
     ]
 
     constructor() {
         super();
-        this.loadImage(this.IMAGES_COINS);
-
+        this.loadImages(this.IMAGES_COINS);
+       this.animate();
         this.offset = {
             top: 30,
             bottom: 30,
@@ -25,17 +24,15 @@ class Coins extends MovableObject {
         };
     }
 
-    /**draw(ctx) {
-      let alpha = 0.5 + 0.5 *Math.sin(this.animationTime);
-      let scale = 0.5 + 0.5 *Math.sin(this.animationTime);
-    
-      this.animationTime +=0.1;
-      ctx.save();
-    
-      ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-      ctx.scale(scale,scale);
-      ctx.globalAlpha = alpha;
-    };*/
+    animate() {
+        setInterval(() => {
+                this.playAnimation(this.IMAGES_COINS);
+            
+
+
+        }, 300);
+    }
+
 
 }
 

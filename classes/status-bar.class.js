@@ -24,7 +24,7 @@ class StatusBar extends DrawableObject {
         if (type === 'coins') {
             this.setPercentage(0);
         } else if (type === 'sauce') {
-            this.setPercentage(0);
+            this.setPercentage(100);
         } else {
             this.setPercentage(100);
         }

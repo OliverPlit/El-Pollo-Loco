@@ -46,8 +46,11 @@ function startGame() {
     world = null;
   }
 
-  world = new World(canvas, keyboard);
-  document.getElementById('startButton').style.display = 'none';
+const level1 = createLevel1(); // Erstelle dein Level hier
+world = new World(canvas, keyboard, level1);
+    world.level.enemies.forEach(enemy => enemy.animate());
+      document.getElementById('startButton').style.display = 'none';
+
   document.getElementById('fullscreen').style.display = 'none';
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
@@ -67,10 +70,9 @@ function backToStart() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawStartScreen();
-
   showExplanation = false;
   showIntro = false;
-  document.getElementById('startButton').style.display = 'flex';
+  document.getElementById('startButton').style.display = 'block';
   document.getElementById('fullscreen').style.display = 'flex';
   document.getElementById('audio').style.display = 'flex';
   document.getElementById('legend').style.display = 'flex';

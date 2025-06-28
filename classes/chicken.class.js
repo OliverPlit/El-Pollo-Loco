@@ -23,6 +23,7 @@ class Chicken extends MovableObject {
         this.loadImages(this.IMAGES_WALKING)
         this.x = 300 + Math.random() * 2500;
         this.speed = 0.15 + Math.random() * 0.25;
+        
         this.animate();
             window.soundManager.addSound(this.deadChicken);
 
@@ -30,6 +31,7 @@ class Chicken extends MovableObject {
 
 
     animate() {
+        
         setInterval(() => {
             this.moveLeft();
         }, 1000 / 60)

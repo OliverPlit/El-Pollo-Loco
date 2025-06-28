@@ -7,7 +7,7 @@ class Character extends MovableObject {
     bottles = 20;
     walkSound = new Audio('./audio/263006__dermotte__giant_step_1.wav');
     jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
-    sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav')
+    sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav');
     lastActionTime = Date.now();
 
     IMAGES_IDLE = [
@@ -118,10 +118,7 @@ class Character extends MovableObject {
 
 
     }
-    stopSounds() {
-        this.sleepSound.pause();
-    }
-
+    
 
     animate() {
 
@@ -173,8 +170,17 @@ class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_WALKING);
             }
             else if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 15) {
-                this.playAnimation(this.IMAGES_SLEEP);
-                if (this.sleepSound.paused) this.sleepSound.play();
+                if (this.world.paused) {
+                    if (!this.sleepSound.paused) {
+                        this.sleepSound.pause();
+                        this.sleepSound.currentTime = 0;
+                    }
+                } else {
+                    this.playAnimation(this.IMAGES_SLEEP);
+                    if (this.sleepSound.paused) {
+                        this.sleepSound.play();
+                    }
+                }
             }
             else if (!this.isHurt() && !isMoving && !isJumping) {
                 this.playAnimation(this.IMAGES_IDLE);

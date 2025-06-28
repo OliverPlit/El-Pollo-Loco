@@ -5,7 +5,7 @@ class Endboss extends MovableObject {
     y = 60;
     energy = 50;
     isDead = false;
-    alertSound = ('./audio/482009__ricratio__rooster-2018-12-25.wav')
+    alertSound = new Audio('./audio/482009__ricratio__rooster-2018-12-25.wav')
 
     IMAGES_ALERT = [
         './assets/img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -56,7 +56,7 @@ class Endboss extends MovableObject {
         this.animate();
         this.updateStatusBarPosition()
         this.animateCurrentState();
-        this.isDeadmuteSounds();
+        window.soundManager.addSound(this.alertSound);
         this.offset = {
             top: 0,
             bottom: 30,
@@ -65,10 +65,7 @@ class Endboss extends MovableObject {
         };
     }
 
-    isDeadmuteSounds() {
-        window.soundManager.addSound(this.alertSound);
 
-    }
     animate() {
         setInterval(() => {
             this.moveLeft();
@@ -112,7 +109,7 @@ class Endboss extends MovableObject {
         this.animationInterval = setInterval(() => {
             this.img = this.imageCache[images[i]];
             i = (i + 1) % images.length;
-        }, 100); 
+        }, 100);
     }
 
 
@@ -123,13 +120,13 @@ class Endboss extends MovableObject {
         } else if (this.state === 'attack') {
             this.playAnimation(this.IMAGES_ATTACK);
             this.playAnimation(this.IMAGES_WALKING);
-            this.alertSound.play();
 
 
             this.moveLeft();
 
         } else if (this.state === 'walking') {
             this.moveLeft();
+
         }
     }
 
@@ -155,9 +152,11 @@ class Endboss extends MovableObject {
                 this.state = 'walking';
                 this.animationFrame = 0;
                 this.stateStartTime = Date.now();
+                if (this.alertSound.paused) {
+            this.alertSound.play();
+        }
             }
 
-            // Animation abspielen
             let images;
             if (this.state === 'alert') images = this.IMAGES_ALERT;
             else if (this.state === 'attack') images = this.IMAGES_ATTACK;

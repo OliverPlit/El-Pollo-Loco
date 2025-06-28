@@ -1,7 +1,6 @@
 class World {
     character = new Character();
     canvas;
-    level = level1;
     ctx;
     keyboard;
     camera_x = 0;
@@ -22,11 +21,13 @@ class World {
     coinSound = new Audio('./audio/402767__lilmati__retro-coin-03.wav');
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
 
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.level = level;
         this.draw();
+
         this.setWorld();
         this.generateCoins();
         this.generateBottles();
@@ -123,18 +124,22 @@ class World {
 
     draw() {
 
-        if (this.paused || !this.active) return;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.camera_x, 0);
-  if (this.gameOver) {
-        this.closeGameBecauseLose();
-        return;
-    }
+        if (this.paused || !this.active) {
+            requestAnimationFrame(() => this.draw());
+            return;
 
-    if (this.gameWin) {
-        this.closeGameBecauseWin();
-        return;
-    }
+
+        } this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.translate(this.camera_x, 0);
+        if (this.gameOver) {
+            this.closeGameBecauseLose();
+            return;
+        }
+
+        if (this.gameWin) {
+            this.closeGameBecauseWin();
+            return;
+        }
         this.endboss.animate();
         console.log(this.character.x);
 
@@ -187,7 +192,7 @@ class World {
         let windowBack = document.getElementById('window_back');
         let backgroundSound = document.getElementById('startSound');
         if (this.gameOver) {
-                    this.character.stopSounds();
+            this.character.stopSounds();
 
             this.ctx.translate(-this.camera_x, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -224,94 +229,101 @@ class World {
             clearInterval(this.checkCollisionsInterval);
             this.checkCollisionsInterval = null;
         }
-
-        this.active = false;
+        this.active = true;
+        this.paused = true;
     }
 
     resumeGameLoop() {
         if (!this.checkCollisionsInterval) {
             this.run();
         }
+        this.paused = false;
         this.active = true;
     }
 
     checkCollisions() {
-    this.checkEnemyCollisions();
-    this.checkThrowableObjectCollisions();
-    this.checkCoinCollisions();
-    this.checkBottleCollisions();
-}
+        this.checkEnemyCollisions();
+        this.checkThrowableObjectCollisions();
+        this.checkCoinCollisions();
+        this.checkBottleCollisions();
+    }
 
-checkEnemyCollisions() {
-    this.level.enemies.forEach((enemy) => {
-        if (this.character.isColliding(enemy)) {
-            const cBox = this.character.getHitBox();
-            const eBox = enemy.getHitBox();
+    checkEnemyCollisions() {
+        this.level.enemies.forEach((enemy) => {
+            if (this.character.isColliding(enemy)) {
+                const cBox = this.character.getHitBox();
+                const eBox = enemy.getHitBox();
 
-            const isJumpingOnEnemy =
-                this.character.speedY < 0 &&
-                cBox.bottom <= eBox.top + (enemy.height / 2);
+                const isJumpingOnEnemy =
+                    this.character.speedY < 0 &&
+                    cBox.bottom <= eBox.top + (enemy.height / 2);
 
-            if (isJumpingOnEnemy) {
-                enemy.energy = 0;
-                this.character.speedY = 25;
-                this.character.y = 155; 
-            } else if (enemy.energy > 0) {
-                let now = new Date().getTime();
-                let timePassed = (now - this.character.lastHit) / 1000;
-
-                if (timePassed > 2 || this.character.lastHit === 0) {
-                    this.character.hit();
-                    this.statusBarHealth.setPercentage(this.character.energy);
-                }
-            }
-        }
-    });
-}
-
-checkThrowableObjectCollisions() {
-    this.level.enemies.forEach((enemy) => {
-        this.throwableObjects.forEach((throwableObject, tIndex) => {
-            if (enemy.isColliding(throwableObject)) {
-                if (enemy instanceof Endboss) {
-                    enemy.hitByBottle();
-                } else {
+                if (isJumpingOnEnemy) {
                     enemy.energy = 0;
-                }
+                    this.character.speedY = 25;
+                    this.character.y = 155;
+                } else if (enemy.energy > 0) {
+                    let now = new Date().getTime();
+                    let timePassed = (now - this.character.lastHit) / 1000;
 
-                this.throwableObjects.splice(tIndex, 1);
+                    if (timePassed > 2 || this.character.lastHit === 0) {
+                        this.character.hit();
+                        this.statusBarHealth.setPercentage(this.character.energy);
+                    }
+                }
             }
         });
-    });
-}
+    }
 
-checkCoinCollisions() {
-    this.coins.forEach((coin, index) => {
-        if (this.character.isColliding(coin)) {
-            this.coins.splice(index, 1);
-            this.character.coins += 1;
-            this.coinSound.play();
+    checkThrowableObjectCollisions() {
+        this.level.enemies.forEach((enemy) => {
+            this.throwableObjects.forEach((throwableObject, tIndex) => {
+                if (enemy.isColliding(throwableObject)) {
+                    if (enemy instanceof Endboss) {
+                        enemy.hitByBottle();
+                        throwableObject.crash();
 
-            let percentage = this.character.coins * 5;
-            if (percentage > 100) percentage = 100;
-            this.statusBarCoins.setPercentage(percentage);
-        }
-    });
-}
+                    } else {
+                        enemy.energy = 0;
+                                        throwableObject.crash();
 
-checkBottleCollisions() {
-    this.bottles.forEach((bottle, index) => {
-        if (this.character.isColliding(bottle)) {
-            this.bottles.splice(index, 1);
-            this.character.bottles += 5;
-            this.collectBottle.play();
+                    }
 
-            let percentage = this.character.bottles * 5;
-            if (percentage > 100) percentage = 100;
-            this.statusBarBottles.setPercentage(percentage);
-        }
-    });
-}
+                    //this.throwableObjects.splice(tIndex, 1);
+                }
+            });
+        });
+    }
+
+    checkCoinCollisions() {
+        this.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.coins.splice(index, 1);
+                this.character.coins += 1;
+                this.coinSound.play();
+
+                let percentage = this.character.coins * 5;
+                if (percentage > 100) percentage = 100;
+                this.statusBarCoins.setPercentage(percentage);
+            }
+        });
+    }
+
+    checkBottleCollisions() {
+        this.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.bottles.splice(index, 1);
+                this.character.bottles += 5;
+                console.log(this.character.bottles);
+                
+                this.collectBottle.play();
+
+                let percentage = this.character.bottles * 5;
+                if (percentage > 100) percentage = 100;
+                this.statusBarBottles.setPercentage(percentage);
+            }
+        });
+    }
 
 
     flipImage(mo) {
