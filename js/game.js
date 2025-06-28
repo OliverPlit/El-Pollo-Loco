@@ -47,7 +47,6 @@ function startGame() {
   }
 
   world = new World(canvas, keyboard);
-//initWorldSounds();
   document.getElementById('startButton').style.display = 'none';
   document.getElementById('fullscreen').style.display = 'none';
   document.getElementById('legend').style.display = 'none';
@@ -78,7 +77,7 @@ function backToStart() {
   document.getElementById('statement').style.display = 'flex';
   document.getElementById('pause').style.display = 'none';
   document.getElementById('back').style.display = 'none';
-    document.getElementById('window_back').style.display = 'none';
+  document.getElementById('window_back').style.display = 'none';
 
 }
 
@@ -142,19 +141,5 @@ window.addEventListener('keyup', (event) => {
 });
 
 
-    function pressKey(key) {
-      if (!window.keyboard) return;
-      switch (key) {
-        case 'LEFT': window.keyboard.LEFT = true; break;
-        case 'RIGHT': window.keyboard.RIGHT = true; break;
-        case 'J': window.keyboard.D = true; break;
-        case 'SPACE': window.keyboard.SPACE = true; break;
-      }
-      setTimeout(() => {
-        if (key === 'LEFT') window.keyboard.LEFT = false;
-        if (key === 'RIGHT') window.keyboard.RIGHT = false;
-        if (key === 'J') window.keyboard.D = false;
-        if (key === 'SPACE') window.keyboard.SPACE = false;
-      }, 200);
-    }
+
 

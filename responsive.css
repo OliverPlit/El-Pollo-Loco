@@ -1,50 +1,91 @@
+@media only screen and (max-width: 760px) and (orientation: landscape) {
+    #mobileControls {
+        display: flex;
+    }
+}
 
+@media only screen and (orientation: portrait) and (max-width: 760px) {
 
-
-    @media only screen and (max-width: 700px) and (orientation: portrait) {
-      canvas, .icons_start, #startButton {
+    .canva_main_div,
+    canvas,
+    #icons,
+    #startButton {
         display: none;
-      }
+    }
 
-      body::before {
-        content: "Please Rotate the Display ↔";
+    body::before {
+        content: "Bitte Gerät drehen ↻";
         position: absolute;
         top: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
-        font-size: 24px;
+        background: rgba(0, 0, 0, 0.7);
         color: white;
-        background-color: rgba(0, 0, 0, 0.7);
         padding: 20px;
+        font-size: 24px;
         border-radius: 10px;
         z-index: 9999;
-      }
     }
 
-    @media only screen and (max-width: 700px) and (orientation: landscape) {
-      #mobileControls {
-        display: flex;
-      }
+
+}
+
+
+@media only screen and (max-height: 720px) {
+    canvas {
+        width: 100%;
     }
 
-    #mobileControls {
-      display: none;
-      justify-content: space-between;
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      right: 10px;
-      z-index: 10;
-      gap: 10px;
+    .start_button {
+        position: fixed;
+        top: 20px;
+    }
+
+    .icons_start {
+        position: fixed;
+        top: 20px;
+    }
+
+    h1 {
+        display: none;
+    }
+}
+
+@media only screen and (max-height: 520px) {
+    .start_button {
+        position: fixed;
+        left: 20px;
+    }
+
+    .icons_start {
+        position: fixed;
+        right: 20px;
+            img {
+                width: 30px;
+                height: 30px;
+            }
+
+    }
+}
+
+@media only screen and (max-height: 480px) {
+    canvas {
+        height: 100vh;
+    }
+
+    .legal-notice {
+        display: none;
     }
 
     #mobileControls button {
-      flex: 1;
-      height: 60px;
-      font-size: 24px;
-      border: none;
-      border-radius: 10px;
-      background-color: #ff9247;
-      color: white;
-      font-family: 'zabras';
+        height: 45px;
+        font-size: 20px;
     }
+}
+
+@media only screen and (max-height: 420px) {
+    #mobileControls button {
+        height: 40px;
+        font-size: 18px;
+    }
+}

@@ -53,8 +53,9 @@
             <canvas width="720" height="480" id="canvas">
 
             </canvas>
-            <button id="startButton" onclick="startGame()">Start</button>
-
+            <div class="start_button_div">
+                <button id="startButton" onclick="startGame()" class="start_button">Start</button>
+            </div>
 
 
             <div id="icons" class="icons_start">
@@ -74,6 +75,7 @@
 
                 <img id="back" src="./assets/img/icons/back-button.png" alt="" style="display: none;"
                     onclick="backToStart()">
+
             </div>
             <div id="mobileControls">
                 <button onclick="pressKey('LEFT')">←</button>
@@ -81,14 +83,17 @@
                 <button onclick="pressKey('SPACE')">Space</button>
                 <button onclick="pressKey('RIGHT')">→</button>
             </div>
+            <a href="./legal_notice.html" class="legal-notice">Legal Notice</a>
+
         </div>
         <div id="window_back" class="window_for_back" style="display: none;">
             <div class="button_lose">
                 <button class="again" onclick="startGame()">Play Again</button>
                 <button class="home" onclick="backToStart()">Home</button>
             </div>
+
         </div>
-        <h4>LegalNotice</h4>
+
     </div>
 
     <audio src="./audio/chill-gaming-vibes-332248.mp3" id="startSound"></audio>

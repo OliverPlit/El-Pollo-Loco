@@ -1,0 +1,35 @@
+
+
+#mobileControls {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    gap: 10px;
+    justify-content: center;
+}
+
+#mobileControls button {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    font-family: 'zabras';
+    background-color: #ff9247;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+#mobileControls button:active {
+    transform: scale(0.95);
+}
+
+@media only screen and (max-width: 900px) and (orientation: landscape) {
+    #mobileControls {
+        display: flex;
+    }
+}
+

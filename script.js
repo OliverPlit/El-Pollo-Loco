@@ -110,3 +110,22 @@ function stopGameplay() {
 
     world.paused = !isPaused;
 }
+
+
+
+
+function pressKey(key) {
+  if (!keyboard) return;
+  switch (key) {
+    case 'LEFT': keyboard.LEFT = true; break;
+    case 'RIGHT': keyboard.RIGHT = true; break;
+    case 'J': keyboard.D = true; break;
+    case 'SPACE': keyboard.SPACE = true; break;
+  }
+  setTimeout(() => {
+    if (key === 'LEFT') keyboard.LEFT = false;
+    if (key === 'RIGHT') keyboard.RIGHT = false;
+    if (key === 'J') keyboard.D = false;
+    if (key === 'SPACE') keyboard.SPACE = false;
+  }, 200);
+}
