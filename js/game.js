@@ -2,55 +2,50 @@ let ctx;
 let world;
 let keyboard = new Keyboard();
 
+
 function init() {
   const canvas = document.getElementById('canvas');
   ctx = canvas.getContext('2d');
-
   startImage = new Image();
   startImage.src = 'assets/img/9_intro_outro_screens/start/startscreen_1.png';
   startImage.onload = () => {
     loadStartScreen();
   };
-
   document.getElementById('startButton').addEventListener('click', startGame);
 }
 
+
 function loadStartScreen() {
   drawStartScreen();
-
   document.getElementById('fullscreen').style.display = 'flex';
   document.getElementById('audio').style.display = 'flex';
   document.getElementById('legend').style.display = 'flex';
   document.getElementById('statement').style.display = 'flex';
 }
 
+
 function drawStartScreen() {
   if (!startImage) return;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
-
   if (showExplanation) {
     drawExplanationOverlayBeforeStart(ctx);
   }
-
   if (showIntro) {
     drawIntro(ctx);
   }
 }
 
+
 function startGame() {
-  // Sicherheit: Falls noch ein Spiel läuft, stoppe es
   if (world) {
     world.stopGameLoop();
     world = null;
   }
-
-const level1 = createLevel1(); // Erstelle dein Level hier
-world = new World(canvas, keyboard, level1);
-    world.level.enemies.forEach(enemy => enemy.animate());
-      document.getElementById('startButton').style.display = 'none';
-
+  const level1 = createLevel1();
+  world = new World(canvas, keyboard, level1);
+  world.level.enemies.forEach(enemy => enemy.animate());
+  document.getElementById('startButton').style.display = 'none';
   document.getElementById('fullscreen').style.display = 'none';
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
@@ -61,13 +56,11 @@ world = new World(canvas, keyboard, level1);
 }
 
 
-
 function backToStart() {
   if (world) {
     world.stopGameLoop();
     world = null;
   }
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawStartScreen();
   showExplanation = false;
@@ -82,9 +75,6 @@ function backToStart() {
   document.getElementById('window_back').style.display = 'none';
 
 }
-
-
-
 
 
 window.addEventListener('keydown', (event) => {
@@ -114,6 +104,7 @@ window.addEventListener('keydown', (event) => {
 
 });
 
+
 window.addEventListener('keyup', (event) => {
   if (event.keyCode == 39) {
     keyboard.RIGHT = false;
@@ -138,8 +129,6 @@ window.addEventListener('keyup', (event) => {
   if (event.keyCode == 68) {
     keyboard.D = false;
   }
-
-
 });
 
 

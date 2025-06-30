@@ -11,20 +11,19 @@ class StatusBar extends DrawableObject {
 
     constructor(type) {
         super();
-
         this.type = type;
         this.y = this.getXByType(type);
         this.x = this.getYByType(type);
         this.width = 250;
         this.height = 60;
-
         this.IMAGES = this.getImagesByType(type);
         this.loadImages(this.IMAGES);
+        this.initializePercentageByType(type);
+    }
 
+    initializePercentageByType(type) {
         if (type === 'coins') {
             this.setPercentage(0);
-        } else if (type === 'sauce') {
-            this.setPercentage(100);
         } else {
             this.setPercentage(100);
         }
@@ -40,7 +39,7 @@ class StatusBar extends DrawableObject {
     }
 
     getYByType(type) {
-           if (type == 'health') return 0;
+        if (type == 'health') return 0;
         if (type == 'sauce') return 0;
         if (type == 'coins') return 0;
     }
@@ -94,18 +93,18 @@ class StatusBar extends DrawableObject {
 
 
 
-setPercentage(percentage) {
-    this.percentage = percentage;
-    let path = this.IMAGES[this.resolveImageIndex()];
-    this.img = this.imageCache[path];
-}
+    setPercentage(percentage) {
+        this.percentage = percentage;
+        let path = this.IMAGES[this.resolveImageIndex()];
+        this.img = this.imageCache[path];
+    }
 
-resolveImageIndex() {
-    if (this.percentage == 100) return 5;
-    if (this.percentage > 80) return 4;
-    if (this.percentage > 60) return 3;
-    if (this.percentage > 40) return 2;
-    if (this.percentage > 20) return 1;
-    return 0;
-}
+    resolveImageIndex() {
+        if (this.percentage == 100) return 5;
+        if (this.percentage > 80) return 4;
+        if (this.percentage > 60) return 3;
+        if (this.percentage > 40) return 2;
+        if (this.percentage > 20) return 1;
+        return 0;
+    }
 }

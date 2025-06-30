@@ -1,10 +1,10 @@
 class SoundManager {
     constructor() {
         this.sounds = [];
-        // Lade den Mute-Status aus localStorage, falls vorhanden, sonst false
         const mutedFromStorage = localStorage.getItem('soundMuted');
         this.isMuted = mutedFromStorage === 'true' ? true : false;
     }
+
 
     addSound(sound) {
         if (sound && typeof sound.play === 'function') {
@@ -12,6 +12,7 @@ class SoundManager {
             sound.muted = this.isMuted;
         }
     }
+
 
     muteAll() {
         this.isMuted = true;
@@ -23,6 +24,7 @@ class SoundManager {
         });
     }
 
+
     unmuteAll() {
         this.isMuted = false;
         localStorage.setItem('soundMuted', 'false');
@@ -31,10 +33,12 @@ class SoundManager {
         });
     }
 
+
     toggle() {
         this.isMuted ? this.unmuteAll() : this.muteAll();
     }
 
+    
     isMuted() {
         return this.isMuted;
     }

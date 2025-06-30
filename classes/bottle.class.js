@@ -1,10 +1,8 @@
 class Bottle extends MovableObject {
-
     y = 300;
     x = 150;
     width = 100;
     height = 70;
-
     IMAGE_BOTTLE = [
         'assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png'
     ];
@@ -22,10 +20,4 @@ class Bottle extends MovableObject {
         };
 
     }
-
-
-
-
-
-
 }

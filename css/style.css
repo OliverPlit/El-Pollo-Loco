@@ -2,6 +2,7 @@
     box-sizing: border-box;
 }
 
+
 body {
     display: flex;
     justify-content: center;
@@ -10,6 +11,7 @@ body {
     font-family: 'zabras';
 }
 
+
 h1 {
     z-index: 3;
     position: absolute;
@@ -17,18 +19,20 @@ h1 {
     font-size: 130px;
 }
 
-a {
-   padding-top: 550px;
-    z-index: 100;
 
+a {
+    padding-top: 550px;
+    z-index: 100;
     font-size: 40px;
 }
+
 
 .fullscreen {
     position: relative;
     width: 100vw;
     height: 100vh;
 }
+
 
 .background_img {
     position: absolute;
@@ -40,6 +44,7 @@ a {
     z-index: 0;
 }
 
+
 .window_for_back {
     display: flex;
     justify-content: center;
@@ -47,7 +52,6 @@ a {
     z-index: 10;
 
     .button_lose {
-
         position: fixed;
         top: 0;
         left: 0;
@@ -55,7 +59,6 @@ a {
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.6);
         z-index: 9999;
-
         display: flex;
         justify-content: center;
         align-items: center;
@@ -63,21 +66,21 @@ a {
         flex-direction: row;
     }
 
+
     .again {
         background-color: green;
         color: white;
         margin: 0;
-
-
     }
+
 
     .home {
         background-color: red;
         color: white;
         margin: 0;
-
     }
 }
+
 
 .canva_main_div {
     display: flex;
@@ -89,25 +92,25 @@ a {
     z-index: 2;
 }
 
+
 canvas {
     position: absolute;
     background-color: black;
     display: block;
     z-index: 1;
     font-family: 'zabras';
-
 }
 
 
 .start_button_div {
-        margin-right: 470px;
-
+    margin-right: 470px;
 }
+
+
 .start_button {
     position: absolute;
     top: 270px;
     z-index: 10;
-
 }
 
 
@@ -126,6 +129,7 @@ button {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
+
 button:hover {
     transform: scale(1.1);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -141,7 +145,6 @@ button:hover {
     top: 270px;
     padding-left: 300px;
     z-index: 2;
-
     img {
         height: 35px;
         width: 35px;
