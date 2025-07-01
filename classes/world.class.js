@@ -1,26 +1,77 @@
+/**
+ * The main game world that manages game state, objects, rendering, and interactions.
+ */
 class World {
+    /** @type {Character} The player character */
     character = new Character();
+
+    /** @type {HTMLCanvasElement} The canvas element for rendering */
     canvas;
+
+    /** @type {CanvasRenderingContext2D} The 2D rendering context */
     ctx;
+
+    /** @type {Keyboard} Keyboard input handler */
     keyboard;
+
+    /** @type {number} Horizontal camera offset */
     camera_x = 0;
+
+    /** @type {StatusBar} Health status bar */
     statusBarHealth = new StatusBar('health');
+
+    /** @type {StatusBar} Bottle (sauce) status bar */
     statusBarBottles = new StatusBar('sauce');
+
+    /** @type {StatusBar} Coins status bar */
     statusBarCoins = new StatusBar('coins');
+
+    /** @type {Endboss} The final boss enemy */
     endboss = new Endboss();
+
+    /** @type {ThrowableObject[]} Array of throwable bottles in the world */
     throwableObjects = [];
+
+    /** @type {Coins[]} Array of coins present in the world */
     coins = [];
+
+    /** @type {Bottle[]} Array of collectible bottles in the world */
     bottles = [];
+
+    /** @type {boolean} Flag to pause the game rendering and logic */
     paused = false;
+
+    /** @type {boolean} Flag indicating whether the game is active */
     active = true;
+
+    /** @type {boolean} Flag indicating if the player has lost */
     gameOver = false;
+
+    /** @type {boolean} Flag indicating if the player has won */
     gameWin = false;
+
+    /** @type {number} Timestamp of the last bottle throw, used for cooldown */
     lastBottleThrowTime = 0;
+
+    /** @type {Audio} Sound played when the player loses */
     loseSound = new Audio('./audio/350987__cabled_mess__lose_c_05.wav');
+
+    /** @type {Audio} Sound played when the player wins */
     winSound = new Audio('./audio/270545__littlerobotsoundfactory__jingle_win_01.wav');
+
+    /** @type {Audio} Sound played when collecting a coin */
     coinSound = new Audio('./audio/402767__lilmati__retro-coin-03.wav');
+
+    /** @type {Audio} Sound played when collecting a bottle */
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
 
+    /**
+     * Creates a new game world.
+     * Initializes canvas, keyboard, level objects, sounds, and starts the game loop.
+     * @param {HTMLCanvasElement} canvas - The canvas element for rendering.
+     * @param {Keyboard} keyboard - The keyboard input manager.
+     * @param {Level} level - The current game level with enemies, clouds, background objects.
+     */
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -31,14 +82,14 @@ class World {
         this.setWorld();
         this.generateCoins();
         this.generateBottles();
-        this.assignWorldToEnemies()
+        this.assignWorldToEnemies();
         this.run();
         this.muteSounds();
-
-
     }
 
-
+    /**
+     * Registers game sounds to the global sound manager for control.
+     */
     muteSounds() {
         window.soundManager.addSound(this.coinSound);
         window.soundManager.addSound(this.collectBottle);
@@ -46,20 +97,26 @@ class World {
         window.soundManager.addSound(this.loseSound);
     }
 
-
+    /**
+     * Assigns the current world to all enemy objects for interaction.
+     */
     assignWorldToEnemies() {
         this.level.enemies.forEach(enemy => {
             enemy.world = this;
         });
     }
 
-
+    /**
+     * Assigns the current world to the player character and starts its animation.
+     */
     setWorld() {
         this.character.world = this;
         this.character.animate();
     }
 
-
+    /**
+     * Generates coins randomly positioned in the level, ensuring minimum distance between them.
+     */
     generateCoins() {
         const minDistance = 80;
         while (this.coins.length < 30) {
@@ -77,14 +134,15 @@ class World {
         }
     }
 
-
+    /**
+     * Generates collectible bottles randomly positioned in the level, ensuring minimum distance between them.
+     */
     generateBottles() {
         const minDistance = 200;
         while (this.bottles.length < 5) {
             let bottle = new Bottle();
             bottle.x = 100 + Math.random() * 2500;
             bottle.y = 370;
-
             let tooClose = this.bottles.some(c => {
                 let dx = c.x - bottle.x;
                 let dy = c.y - bottle.y;
@@ -96,7 +154,9 @@ class World {
         }
     }
 
-
+    /**
+     * Starts the game loop that checks collisions and throwing actions at regular intervals.
+     */
     run() {
         this.checkCollisionsInterval = setInterval(() => {
             this.checkCollisions();
@@ -104,7 +164,9 @@ class World {
         }, 100);
     }
 
-
+    /**
+     * Checks if the player is trying to throw a bottle, enforces cooldown and updates game state.
+     */
     checkThrowObjects() {
         const now = new Date().getTime();
         const cooldown = 1000;
@@ -118,13 +180,18 @@ class World {
         }
     }
 
-
+    /**
+     * Draws all game objects and UI elements on the canvas each animation frame.
+     * Handles pause, game win and lose conditions.
+     */
     draw() {
         if (this.paused || !this.active) {
             requestAnimationFrame(() => this.draw());
             return;
-        } this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
+
         if (this.gameOver) {
             this.closeGameBecauseLose();
             return;
@@ -134,9 +201,10 @@ class World {
             this.closeGameBecauseWin();
             return;
         }
+
         this.endboss.animate();
         this.addObjectsToMap(this.level.backgroundObjects);
-        this.ctx.translate(-this.camera_x, 0)
+        this.ctx.translate(-this.camera_x, 0);
         this.addtoMap(this.statusBarHealth);
         this.addtoMap(this.statusBarBottles);
         this.addtoMap(this.statusBarCoins);
@@ -148,7 +216,8 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
         this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.bottles);
-        this.ctx.translate(-this.camera_x, 0)
+        this.ctx.translate(-this.camera_x, 0);
+
         if (this.showIntro) {
             this.drawExplanationOverlay();
         }
@@ -158,7 +227,9 @@ class World {
         }
     }
 
-
+    /**
+     * Handles game win: displays win screen, plays win sound, stops game loop.
+     */
     closeGameBecauseWin() {
         let windowBack = document.getElementById('window_back');
         let backgroundSound = document.getElementById('startSound');
@@ -170,12 +241,15 @@ class World {
             this.ctx.restore();
             this.stopGameLoop();
             setTimeout(() => {
-                windowBack.style.display = 'flex'
-            }, 1000); return;
+                windowBack.style.display = 'flex';
+            }, 1000);
+            return;
         }
     }
 
-
+    /**
+     * Handles game lose: displays lose screen, plays lose sound, stops background sound.
+     */
     closeGameBecauseLose() {
         let windowBack = document.getElementById('window_back');
         let backgroundSound = document.getElementById('startSound');
@@ -186,28 +260,28 @@ class World {
             this.loseSound.play();
             backgroundSound.pause();
             setTimeout(() => {
-                windowBack.style.display = 'flex'
+                windowBack.style.display = 'flex';
             }, 1000);
             this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
             return;
         }
     }
 
-
+  
     addObjectsToMap(objects) {
         objects.forEach(o => {
-            this.addtoMap(o)
+            this.addtoMap(o);
         });
     }
 
-
+   
     addtoMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
         if (mo.otherDirection) {
-            this.flipImageBack(mo)
+            this.flipImageBack(mo);
         }
     }
 
@@ -221,7 +295,7 @@ class World {
         this.paused = true;
     }
 
-
+  
     resumeGameLoop() {
         if (!this.checkCollisionsInterval) {
             this.run();
@@ -230,7 +304,7 @@ class World {
         this.active = true;
     }
 
-
+    
     checkCollisions() {
         this.checkEnemyCollisions();
         this.checkThrowableObjectCollisions();
@@ -238,7 +312,7 @@ class World {
         this.checkBottleCollisions();
     }
 
-
+   
     checkEnemyCollisions() {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
@@ -264,7 +338,7 @@ class World {
         });
     }
 
-
+    
     checkThrowableObjectCollisions() {
         this.level.enemies.forEach((enemy) => {
             this.throwableObjects.forEach((throwableObject, tIndex) => {
@@ -274,14 +348,14 @@ class World {
                         throwableObject.crash();
                     } else {
                         enemy.energy = 0;
-                                        throwableObject.crash();
-
+                        throwableObject.crash();
                     }
                 }
             });
         });
     }
 
+  
     checkCoinCollisions() {
         this.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
@@ -296,7 +370,7 @@ class World {
         });
     }
 
-    
+
     checkBottleCollisions() {
         this.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
@@ -324,6 +398,3 @@ class World {
         this.ctx.restore();
     }
 }
-
-
-

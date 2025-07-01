@@ -1,3 +1,6 @@
+/**
+ * Collectible coin object that animates spinning coins.
+ */
 class Coins extends MovableObject {
     y = 200;
     x = 250;
@@ -7,8 +10,11 @@ class Coins extends MovableObject {
     IMAGES_COINS = [
         './assets/img/8_coin/coin_1.png',
         './assets/img/8_coin/coin_2.png'
-    ]
+    ];
 
+    /**
+     * Initializes the coin, loads images and starts the animation.
+     */
     constructor() {
         super();
         this.loadImages(this.IMAGES_COINS);
@@ -21,12 +27,15 @@ class Coins extends MovableObject {
         };
     }
 
-
+    /**
+     * Starts an interval to animate coin frames.
+     */
     animate() {
         setInterval(() => {
             this.playAnimation(this.IMAGES_COINS);
         }, 300);
     }
 }
+
 
 

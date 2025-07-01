@@ -1,34 +1,60 @@
+/**
+ * Represents a drawable object that can move and interact in the game world.
+ * Extends DrawableObject with movement, collision, gravity, and health functionality.
+ */
 class MovableObject extends DrawableObject {
+    /** @type {number} Horizontal movement speed */
     speed = 0.15;
-    otherDirection = false;
-    speedY = 0;
-    acceleration = 2.5;
-    energy = 100;
-    lastHit = 0;
-    hurtSound = new Audio('./audio/515624__mrickey13__playerhurt2.wav')
 
+    /** @type {boolean} Indicates if the object is facing the opposite direction */
+    otherDirection = false;
+
+    /** @type {number} Vertical speed for jumps and falls */
+    speedY = 0;
+
+    /** @type {number} Gravity acceleration applied to vertical speed */
+    acceleration = 2.5;
+
+    /** @type {number} Current energy (health) of the object */
+    energy = 100;
+
+    /** @type {number} Timestamp of the last time the object was hit */
+    lastHit = 0;
+
+    /** @type {Audio} Sound played when the object is hurt */
+    hurtSound = new Audio('./audio/515624__mrickey13__playerhurt2.wav');
+
+    /**
+     * Creates a new MovableObject and registers hurt sound.
+     */
     constructor() {
         super();
         window.soundManager.addSound(this.hurtSound);
-
     }
 
-
+    /**
+     * Applies gravity to the object, making it fall if above ground.
+     */
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
-                this.y -= this.speedY
+                this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
         }, 1000 / 25);
     }
 
-
+    /**
+     * Makes the object jump by setting an upward vertical speed.
+     */
     jump() {
         this.speedY = 20;
     }
 
-
+    /**
+     * Checks if the object is above the ground.
+     * @returns {boolean} True if above ground, false otherwise.
+     */
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true;
@@ -36,7 +62,10 @@ class MovableObject extends DrawableObject {
         return this.y < 180;
     }
 
-
+    /**
+     * Returns the hitbox boundaries of the object, considering offsets.
+     * @returns {{left: number, right: number, top: number, bottom: number}} Hitbox rectangle.
+     */
     getHitBox() {
         return {
             left: this.x + (this.offset?.left || 0),
@@ -46,7 +75,11 @@ class MovableObject extends DrawableObject {
         };
     }
 
-
+    /**
+     * Checks collision with another MovableObject based on hitboxes.
+     * @param {MovableObject} mo - Another movable object to check collision against.
+     * @returns {boolean} True if colliding, false otherwise.
+     */
     isColliding(mo) {
         const a = this.getHitBox();
         const b = mo.getHitBox();
@@ -58,7 +91,9 @@ class MovableObject extends DrawableObject {
         );
     }
 
-
+    /**
+     * Applies damage to the object, reducing energy and updating last hit time.
+     */
     hit() {
         this.energy -= 10;
         if (this.energy < 0) {
@@ -68,29 +103,42 @@ class MovableObject extends DrawableObject {
         }
     }
 
-
+    /**
+     * Checks if the object is currently in a hurt state (within 2 seconds after hit).
+     * @returns {boolean} True if hurt, false otherwise.
+     */
     isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;
         timePassed = timePassed / 1000;
         return timePassed < 2;
     }
 
-
+    /**
+     * Checks if the object is dead (energy equals zero).
+     * @returns {boolean} True if dead, false otherwise.
+     */
     isDead() {
         return this.energy == 0;
     }
 
-
+    /**
+     * Moves the object to the right by its speed.
+     */
     moveRight() {
         this.x += this.speed;
     }
 
-
+    /**
+     * Moves the object to the left by its speed.
+     */
     moveLeft() {
         this.x -= this.speed;
     }
 
-    
+    /**
+     * Animates the object by cycling through a given array of image paths.
+     * @param {string[]} images - Array of image source paths to animate through.
+     */
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
@@ -98,5 +146,3 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 }
-
-

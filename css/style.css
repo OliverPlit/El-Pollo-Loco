@@ -15,7 +15,7 @@ body {
 h1 {
     z-index: 3;
     position: absolute;
-    top: 0px;
+    top: 10px;
     font-size: 130px;
 }
 

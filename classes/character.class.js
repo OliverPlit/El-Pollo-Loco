@@ -1,3 +1,6 @@
+/**
+ * Main controllable character in the game.
+ */
 class Character extends MovableObject {
     height = 280;
     y = 155;
@@ -10,12 +13,7 @@ class Character extends MovableObject {
     sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav');
     lastActionTime = Date.now();
     world;
-offset = {
-            top: 101,
-            bottom: 10,
-            left: 10,
-            right: 15
-        };
+    offset = { top: 101, bottom: 10, left: 10, right: 15 };
 
     IMAGES_IDLE = [
         './assets/img/2_character_pepe/1_idle/idle/I-1.png',
@@ -30,7 +28,6 @@ offset = {
         './assets/img/2_character_pepe/1_idle/idle/I-10.png'
     ];
 
-
     IMAGES_WALKING = [
         './assets/img/2_character_pepe/2_walk/W-21.png',
         './assets/img/2_character_pepe/2_walk/W-22.png',
@@ -40,7 +37,6 @@ offset = {
         './assets/img/2_character_pepe/2_walk/W-26.png'
     ];
 
-
     IMAGES_JUMPING = [
         './assets/img/2_character_pepe/3_jump/J-31.png',
         './assets/img/2_character_pepe/3_jump/J-32.png',
@@ -49,9 +45,8 @@ offset = {
         './assets/img/2_character_pepe/3_jump/J-35.png',
         './assets/img/2_character_pepe/3_jump/J-36.png',
         './assets/img/2_character_pepe/3_jump/J-37.png',
-        './assets/img/2_character_pepe/3_jump/J-39.png',
+        './assets/img/2_character_pepe/3_jump/J-39.png'
     ];
-
 
     IMAGES_DEAD = [
         'assets/img/2_character_pepe/5_dead/D-51.png',
@@ -63,13 +58,11 @@ offset = {
         'assets/img/2_character_pepe/5_dead/D-57.png'
     ];
 
-
     IMAGES_HURT = [
         'assets/img/2_character_pepe/4_hurt/H-41.png',
         'assets/img/2_character_pepe/4_hurt/H-42.png',
-        'assets/img/2_character_pepe/4_hurt/H-43.png',
-    ]
-
+        'assets/img/2_character_pepe/4_hurt/H-43.png'
+    ];
 
     IMAGES_SLEEP = [
         './assets/img/2_character_pepe/1_idle/long_idle/I-11.png',
@@ -81,10 +74,12 @@ offset = {
         './assets/img/2_character_pepe/1_idle/long_idle/I-17.png',
         './assets/img/2_character_pepe/1_idle/long_idle/I-18.png',
         './assets/img/2_character_pepe/1_idle/long_idle/I-19.png',
-        './assets/img/2_character_pepe/1_idle/long_idle/I-20.png',
+        './assets/img/2_character_pepe/1_idle/long_idle/I-20.png'
     ];
 
-
+    /**
+     * Initializes the character, loads images and sets up sounds.
+     */
     constructor() {
         super().loadImage('./assets/img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_IDLE);
@@ -95,116 +90,148 @@ offset = {
         this.loadImages(this.IMAGES_SLEEP);
         this.applyGravity();
         this.loseImage = new Image();
-        this.loseImage.src = './assets/img/9_intro_outro_screens/game_over/game over!.png'
+        this.loseImage.src = './assets/img/9_intro_outro_screens/game_over/game over!.png';
         this.winImage = new Image();
         this.winImage.src = './assets/img/You won, you lost/You Win A.png';
-        this.muteSounds()
+        this.muteSounds();
         this.offset;
     }
 
-
+    /**
+     * Adds character-specific sounds to the global sound manager for mute/unmute control.
+     */
     muteSounds() {
         window.soundManager.addSound(this.jumpSound);
         window.soundManager.addSound(this.walkSound);
         window.soundManager.addSound(this.sleepSound);
     }
 
-
+    /**
+     * Starts the animation loop and movement handler for the character.
+     */
     animate() {
-    this.startMovementHandler();
-    this.startAnimationHandler();
-}
-
-
-startMovementHandler() {
-    setInterval(() => {
-        const now = Date.now();
-        this.handleJump(now);
-        this.handleRight(now);
-        this.handleLeft(now);
-        this.updateCamera();
-    }, 1000 / 60);
-}
-
-
-handleJump(now) {
-    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-        this.jumpSound.play();
-        this.lastActionTime = now;
+        this.startMovementHandler();
+        this.startAnimationHandler();
     }
-}
 
-
-handleRight(now) {
-    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.walkSound.play();
-        this.otherDirection = false;
-        this.lastActionTime = now;
+    /**
+     * Sets up movement handling with interval-based checks.
+     */
+    startMovementHandler() {
+        setInterval(() => {
+            const now = Date.now();
+            this.handleJump(now);
+            this.handleRight(now);
+            this.handleLeft(now);
+            this.updateCamera();
+        }, 1000 / 60);
     }
-}
 
-
-handleLeft(now) {
-    if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        this.lastActionTime = now;
-    }
-}
-
-
-updateCamera() {
-    this.world.camera_x = -this.x + 200;
-}
-
-
-startAnimationHandler() {
-    setInterval(() => {
-        const now = Date.now();
-        const timeSinceLastAction = (now - this.lastActionTime) / 1000;
-        this.handleAnimations(timeSinceLastAction);
-    }, 50);
-}
-
-
-handleAnimations(timeSinceLastAction) {
-    const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
-    const isJumping = this.isAboveGround();
-    if (this.isDead()) this.handleDead();
-    else if (this.isHurt()) this.handleHurt();
-    else if (isJumping) this.playAnimation(this.IMAGES_JUMPING);
-    else if (isMoving) this.playAnimation(this.IMAGES_WALKING);
-    else this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
-}
-
-
-handleDead() {
-    this.playAnimation(this.IMAGES_DEAD);
-    this.world.gameOver = true;
-}
-
-
-handleHurt() {
-    this.playAnimation(this.IMAGES_HURT);
-    this.hurtSound.play();
-}
-
-
-handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
-    if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 15) {
-        if (this.world.paused) {
-            if (!this.sleepSound.paused) {
-                this.sleepSound.pause();
-                this.sleepSound.currentTime = 0;
-            }
-        } else {
-            this.playAnimation(this.IMAGES_SLEEP);
-            if (this.sleepSound.paused) this.sleepSound.play();
+    /**
+     * Handles the jumping logic when space key is pressed.
+     * @param {number} now - Current timestamp
+     */
+    handleJump(now) {
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            this.jumpSound.play();
+            this.lastActionTime = now;
         }
-    } else if (!this.isHurt() && !isMoving && !isJumping) {
-        this.playAnimation(this.IMAGES_IDLE);
     }
-}
+
+    /**
+     * Moves the character to the right if the right arrow key is pressed.
+     * @param {number} now - Current timestamp
+     */
+    handleRight(now) {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.walkSound.play();
+            this.otherDirection = false;
+            this.lastActionTime = now;
+        }
+    }
+
+    /**
+     * Moves the character to the left if the left arrow key is pressed.
+     * @param {number} now - Current timestamp
+     */
+    handleLeft(now) {
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            this.lastActionTime = now;
+        }
+    }
+
+    /**
+     * Updates the camera position based on character's current x-coordinate.
+     */
+    updateCamera() {
+        this.world.camera_x = -this.x + 200;
+    }
+
+    /**
+     * Sets up animation state updates at a regular interval.
+     */
+    startAnimationHandler() {
+        setInterval(() => {
+            const now = Date.now();
+            const timeSinceLastAction = (now - this.lastActionTime) / 1000;
+            this.handleAnimations(timeSinceLastAction);
+        }, 50);
+    }
+
+    /**
+     * Determines which animation to play based on character state.
+     * @param {number} timeSinceLastAction - Seconds since last user action
+     */
+    handleAnimations(timeSinceLastAction) {
+        const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+        const isJumping = this.isAboveGround();
+
+        if (this.isDead()) this.handleDead();
+        else if (this.isHurt()) this.handleHurt();
+        else if (isJumping) this.playAnimation(this.IMAGES_JUMPING);
+        else if (isMoving) this.playAnimation(this.IMAGES_WALKING);
+        else this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+    }
+
+    /**
+     * Plays dead animation and sets game over state.
+     */
+    handleDead() {
+        this.playAnimation(this.IMAGES_DEAD);
+        this.world.gameOver = true;
+    }
+
+    /**
+     * Plays hurt animation and triggers hurt sound.
+     */
+    handleHurt() {
+        this.playAnimation(this.IMAGES_HURT);
+        this.hurtSound.play();
+    }
+
+    /**
+     * Plays idle or sleep animation if character is inactive.
+     * @param {boolean} isMoving - Whether character is moving
+     * @param {boolean} isJumping - Whether character is jumping
+     * @param {number} timeSinceLastAction - Inactivity duration in seconds
+     */
+    handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
+        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 15) {
+            if (this.world.paused) {
+                if (!this.sleepSound.paused) {
+                    this.sleepSound.pause();
+                    this.sleepSound.currentTime = 0;
+                }
+            } else {
+                this.playAnimation(this.IMAGES_SLEEP);
+                if (this.sleepSound.paused) this.sleepSound.play();
+            }
+        } else if (!this.isHurt() && !isMoving && !isJumping) {
+            this.playAnimation(this.IMAGES_IDLE);
+        }
+    }
 }
