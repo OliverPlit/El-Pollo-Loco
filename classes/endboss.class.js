@@ -12,7 +12,7 @@ class Endboss extends MovableObject {
     /** @type {number} Vertical position */
     y = 60;
     /** @type {number} Remaining energy/health */
-    energy = 50;
+    energy = 120;
     /** @type {boolean} Whether the boss is dead */
     isDead = false;
     /** @type {Audio} Sound played when alert triggered */

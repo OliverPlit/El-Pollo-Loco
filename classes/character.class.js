@@ -7,12 +7,12 @@ class Character extends MovableObject {
     x = 20;
     speed = 10;
     coins = 0;
-    bottles = 20;
+    bottles = 0;
     walkSound = new Audio('./audio/263006__dermotte__giant_step_1.wav');
     jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
     sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav');
     lastActionTime = Date.now();
-    wasJumping = false;
+animationInProgress = false;
 
     world;
     offset = { top: 101, bottom: 10, left: 10, right: 15 };
@@ -108,6 +108,11 @@ class Character extends MovableObject {
         window.soundManager.addSound(this.sleepSound);
     }
 
+
+    stopAnimation() {
+  clearInterval(this.animationInterval);
+}
+
     /**
      * Starts the animation loop and movement handler for the character.
      */
@@ -192,35 +197,37 @@ class Character extends MovableObject {
     const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
     const isJumping = this.isAboveGround();
 
-    if (this.isDead()) {
-        this.handleDead();
-        this.wasJumping = false;
-        return;
-    }
-
-    if (this.isHurt()) {
-        this.handleHurt();
-        this.wasJumping = false;
-        return;
-    }
-
-    if (isJumping) {
-        if (!this.wasJumping) {
-            this.wasJumping = true;
-            this.playAnimation(this.IMAGES_JUMPING); // Nur 1x starten
-        }
-        return;
-    } else {
-        this.wasJumping = false;
-    }
-
-    if (isMoving) {
-        this.playAnimation(this.IMAGES_WALKING);
-        return;
-    }
-
-    this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+   if (this.isDead()) {
+    this.handleDead();
+    this.wasJumping = false;
+    return;
 }
+
+if (this.isHurt()) {
+    this.handleHurt();
+    this.wasJumping = false;
+    return;
+}
+
+if (isJumping) {
+    if (!this.wasJumping && !this.animationInProgress) {
+        this.playAnimationOnce(this.IMAGES_JUMPING, () => {
+            this.animationInProgress = false;
+        });
+        this.wasJumping = true;
+    }
+    return;
+} else {
+    this.wasJumping = false;
+}
+
+if (isMoving) {
+    this.playAnimation(this.IMAGES_WALKING);
+    return;
+}
+
+this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+ }
 
     /**
      * Plays dead animation and sets game over state.

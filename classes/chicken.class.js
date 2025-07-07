@@ -38,6 +38,12 @@ stopAllAnimations() {
     clearInterval(this.walkInterval);
     clearInterval(this.deathCheckInterval);
 }
+
+stopAnimation() {
+  clearInterval(this.animationInterval);
+}
+
+
     /**
      * Starts all animation intervals for movement, walking, and death detection.
      */

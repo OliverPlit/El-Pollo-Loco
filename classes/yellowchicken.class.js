@@ -55,7 +55,9 @@ class YellowChicken extends MovableObject {
         this.jumpLoop();
         this.muteSounds();
     }
-
+stopAnimation() {
+  clearInterval(this.animationInterval);
+}
     /**
      * Registers the death sound with the global sound manager.
      */

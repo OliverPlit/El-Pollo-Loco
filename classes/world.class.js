@@ -1,95 +1,43 @@
-/**
- * The main game world that manages game state, objects, rendering, and interactions.
- */
 class World {
-    /** @type {Character} The player character */
     character = new Character();
-
-    /** @type {HTMLCanvasElement} The canvas element for rendering */
     canvas;
-
-    /** @type {CanvasRenderingContext2D} The 2D rendering context */
     ctx;
-
-    /** @type {Keyboard} Keyboard input handler */
     keyboard;
-
-    /** @type {number} Horizontal camera offset */
     camera_x = 0;
-
-    /** @type {StatusBar} Health status bar */
     statusBarHealth = new StatusBar('health');
-
-    /** @type {StatusBar} Bottle (sauce) status bar */
     statusBarBottles = new StatusBar('sauce');
-
-    /** @type {StatusBar} Coins status bar */
     statusBarCoins = new StatusBar('coins');
-
-    /** @type {Endboss} The final boss enemy */
     endboss = new Endboss();
-
-    /** @type {ThrowableObject[]} Array of throwable bottles in the world */
     throwableObjects = [];
-
-    /** @type {Coins[]} Array of coins present in the world */
     coins = [];
-
-    /** @type {Bottle[]} Array of collectible bottles in the world */
     bottles = [];
-
-    /** @type {boolean} Flag to pause the game rendering and logic */
     paused = false;
-
-    /** @type {boolean} Flag indicating whether the game is active */
     active = true;
-
-    /** @type {boolean} Flag indicating if the player has lost */
     gameOver = false;
-
-    /** @type {boolean} Flag indicating if the player has won */
     gameWin = false;
-
-    /** @type {number} Timestamp of the last bottle throw, used for cooldown */
     lastBottleThrowTime = 0;
-
-    /** @type {Audio} Sound played when the player loses */
     loseSound = new Audio('./audio/350987__cabled_mess__lose_c_05.wav');
-
-    /** @type {Audio} Sound played when the player wins */
     winSound = new Audio('./audio/270545__littlerobotsoundfactory__jingle_win_01.wav');
-
-    /** @type {Audio} Sound played when collecting a coin */
     coinSound = new Audio('./audio/402767__lilmati__retro-coin-03.wav');
-
-    /** @type {Audio} Sound played when collecting a bottle */
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
+    requestAnimationFrameID;
+    frameSkipCounter = 0;
+    frameSkipRate = 2; // Render nur jedes zweite Frame
 
-    /**
-     * Creates a new game world.
-     * Initializes canvas, keyboard, level objects, sounds, and starts the game loop.
-     * @param {HTMLCanvasElement} canvas - The canvas element for rendering.
-     * @param {Keyboard} keyboard - The keyboard input manager.
-     * @param {Level} level - The current game level with enemies, clouds, background objects.
-     */
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.level = level;
-        this.draw();
-
         this.setWorld();
         this.generateCoins();
         this.generateBottles();
         this.assignWorldToEnemies();
         this.run();
         this.muteSounds();
+        this.draw();
     }
 
-    /**
-     * Registers game sounds to the global sound manager for control.
-     */
     muteSounds() {
         window.soundManager.addSound(this.coinSound);
         window.soundManager.addSound(this.collectBottle);
@@ -97,66 +45,39 @@ class World {
         window.soundManager.addSound(this.loseSound);
     }
 
-    /**
-     * Assigns the current world to all enemy objects for interaction.
-     */
     assignWorldToEnemies() {
-        this.level.enemies.forEach(enemy => {
-            enemy.world = this;
-        });
+        this.level.enemies.forEach(enemy => enemy.world = this);
     }
 
-    /**
-     * Assigns the current world to the player character and starts its animation.
-     */
     setWorld() {
         this.character.world = this;
         this.character.animate();
     }
 
-    /**
-     * Generates coins randomly positioned in the level, ensuring minimum distance between them.
-     */
     generateCoins() {
         const minDistance = 80;
         while (this.coins.length < 30) {
             let coin = new Coins();
             coin.x = 100 + Math.random() * 2500;
             coin.y = 100 + Math.random() * 280;
-            let tooClose = this.coins.some(c => {
-                let dx = c.x - coin.x;
-                let dy = c.y - coin.y;
-                return Math.sqrt(dx * dx + dy * dy) < minDistance;
-            });
-            if (!tooClose) {
+            if (!this.coins.some(c => Math.hypot(c.x - coin.x, c.y - coin.y) < minDistance)) {
                 this.coins.push(coin);
             }
         }
     }
 
-    /**
-     * Generates collectible bottles randomly positioned in the level, ensuring minimum distance between them.
-     */
     generateBottles() {
         const minDistance = 200;
         while (this.bottles.length < 5) {
             let bottle = new Bottle();
             bottle.x = 100 + Math.random() * 2500;
             bottle.y = 370;
-            let tooClose = this.bottles.some(c => {
-                let dx = c.x - bottle.x;
-                let dy = c.y - bottle.y;
-                return Math.sqrt(dx * dx + dy * dy) < minDistance;
-            });
-            if (!tooClose) {
+            if (!this.bottles.some(c => Math.hypot(c.x - bottle.x, c.y - bottle.y) < minDistance)) {
                 this.bottles.push(bottle);
             }
         }
     }
 
-    /**
-     * Starts the game loop that checks collisions and throwing actions at regular intervals.
-     */
     run() {
         this.checkCollisionsInterval = setInterval(() => {
             this.checkCollisions();
@@ -164,43 +85,32 @@ class World {
         }, 100);
     }
 
-    /**
-     * Checks if the player is trying to throw a bottle, enforces cooldown and updates game state.
-     */
     checkThrowObjects() {
-        const now = new Date().getTime();
+        const now = Date.now();
         const cooldown = 1000;
         if (this.keyboard.D && this.character.bottles > 0 && now - this.lastBottleThrowTime > cooldown) {
-let offsetX = this.character.otherDirection ? -50 : 100;
-let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, this.character.otherDirection);            this.throwableObjects.push(bottle);
+            const offsetX = this.character.otherDirection ? -50 : 100;
+            const bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, this.character.otherDirection);
+            this.throwableObjects.push(bottle);
             this.character.bottles--;
-            let percentage = (this.character.bottles / 20) * 100;
-            this.statusBarBottles.setPercentage(percentage);
+            this.statusBarBottles.setPercentage((this.character.bottles / 20) * 100);
             this.lastBottleThrowTime = now;
         }
     }
 
-    /**
-     * Draws all game objects and UI elements on the canvas each animation frame.
-     * Handles pause, game win and lose conditions.
-     */
     draw() {
-        if (this.paused || !this.active) {
-            requestAnimationFrame(() => this.draw());
-            return;
-        }
+        this.requestAnimationFrameID = requestAnimationFrame(() => this.draw());
+
+        if (this.paused || !this.active) return;
+
+        // Frameskipping
+        if (this.frameSkipCounter++ % this.frameSkipRate !== 0) return;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
 
-        if (this.gameOver) {
-            this.closeGameBecauseLose();
-            return;
-        }
-
-        if (this.gameWin) {
-            this.closeGameBecauseWin();
-            return;
-        }
+        if (this.gameOver) return this.closeGameBecauseLose();
+        if (this.gameWin) return this.closeGameBecauseWin();
 
         this.endboss.animate();
         this.addObjectsToMap(this.level.backgroundObjects);
@@ -218,93 +128,68 @@ let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 
         this.addObjectsToMap(this.bottles);
         this.ctx.translate(-this.camera_x, 0);
 
-        if (this.showIntro) {
-            this.drawExplanationOverlay();
-        }
-
-        if (this.active) {
-            requestAnimationFrame(() => this.draw());
-        }
+        if (this.showIntro) this.drawExplanationOverlay();
     }
 
-    /**
-     * Handles game win: displays win screen, plays win sound, stops game loop.
-     */
     closeGameBecauseWin() {
-        let windowBack = document.getElementById('window_back');
-        let backgroundSound = document.getElementById('startSound');
-        if (this.gameWin) {
-            this.ctx.translate(-this.camera_x, 0);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            this.ctx.drawImage(this.character.winImage, 0, 0, this.canvas.width, this.canvas.height);
-            this.winSound.play();
-            this.ctx.restore();
-            this.stopGameLoop();
-            setTimeout(() => {
-                windowBack.style.display = 'flex';
-            }, 1000);
-            return;
-        }
+        const windowBack = document.getElementById('window_back');
+        const backgroundSound = document.getElementById('startSound');
+        this.ctx.translate(-this.camera_x, 0);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.character.winImage, 0, 0, this.canvas.width, this.canvas.height);
+        this.winSound.play();
+        this.ctx.restore();
+        this.stopGameLoop();
+        setTimeout(() => windowBack.style.display = 'flex', 1000);
     }
 
-    /**
-     * Handles game lose: displays lose screen, plays lose sound, stops background sound.
-     */
     closeGameBecauseLose() {
-        let windowBack = document.getElementById('window_back');
-        let backgroundSound = document.getElementById('startSound');
-        if (this.gameOver) {
-            this.character.stopSounds();
-            this.ctx.translate(-this.camera_x, 0);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            this.loseSound.play();
-            backgroundSound.pause();
-            setTimeout(() => {
-                windowBack.style.display = 'flex';
-            }, 1000);
-            this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
-            return;
-        }
+        const windowBack = document.getElementById('window_back');
+        const backgroundSound = document.getElementById('startSound');
+        this.ctx.translate(-this.camera_x, 0);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.loseSound.play();
+        backgroundSound.pause();
+        setTimeout(() => windowBack.style.display = 'flex', 1000);
+        this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
     }
 
-  
     addObjectsToMap(objects) {
-        objects.forEach(o => {
-            this.addtoMap(o);
-        });
+        objects.forEach(o => this.addtoMap(o));
     }
 
-   
     addtoMap(mo) {
-        if (mo.otherDirection) {
-            this.flipImage(mo);
-        }
+        if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
-        if (mo.otherDirection) {
-            this.flipImageBack(mo);
-        }
+        if (mo.otherDirection) this.flipImageBack(mo);
     }
-
 
     stopGameLoop() {
         if (this.checkCollisionsInterval) {
             clearInterval(this.checkCollisionsInterval);
             this.checkCollisionsInterval = null;
         }
-        this.active = true;
+        if (this.requestAnimationFrameID) {
+            cancelAnimationFrame(this.requestAnimationFrameID);
+            this.requestAnimationFrameID = null;
+        }
+
+        this.level.enemies.forEach(enemy => {
+    if (enemy.stopAllAnimations) {
+        enemy.stopAllAnimations();
+    }
+});
+        this.active = false;
         this.paused = true;
     }
 
-  
     resumeGameLoop() {
-        if (!this.checkCollisionsInterval) {
-            this.run();
-        }
+        if (!this.checkCollisionsInterval) this.run();
+        if (!this.requestAnimationFrameID) this.draw();
         this.paused = false;
         this.active = true;
     }
 
-    
     checkCollisions() {
         this.checkEnemyCollisions();
         this.checkThrowableObjectCollisions();
@@ -312,23 +197,20 @@ let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 
         this.checkBottleCollisions();
     }
 
-   
     checkEnemyCollisions() {
-        this.level.enemies.forEach((enemy) => {
+        this.level.enemies.forEach(enemy => {
             if (this.character.isColliding(enemy)) {
                 const cBox = this.character.getHitBox();
                 const eBox = enemy.getHitBox();
-                const isJumpingOnEnemy =
-                    this.character.speedY < 0 &&
-                    cBox.bottom <= eBox.top + (enemy.height / 2);
+                const isJumpingOnEnemy = this.character.speedY < 0 && cBox.bottom <= eBox.top + (enemy.height / 2);
+
                 if (isJumpingOnEnemy) {
                     enemy.energy = 0;
                     this.character.speedY = 25;
                     this.character.y = 155;
                 } else if (enemy.energy > 0) {
-                    let now = new Date().getTime();
-                    let timePassed = (now - this.character.lastHit) / 1000;
-
+                    const now = Date.now();
+                    const timePassed = (now - this.character.lastHit) / 1000;
                     if (timePassed > 2 || this.character.lastHit === 0) {
                         this.character.hit();
                         this.statusBarHealth.setPercentage(this.character.energy);
@@ -338,63 +220,56 @@ let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 
         });
     }
 
-    
     checkThrowableObjectCollisions() {
-        this.level.enemies.forEach((enemy) => {
-            this.throwableObjects.forEach((throwableObject, tIndex) => {
+        this.level.enemies.forEach(enemy => {
+            this.throwableObjects.forEach((throwableObject) => {
                 if (enemy.isColliding(throwableObject)) {
                     if (enemy instanceof Endboss) {
                         enemy.hitByBottle();
-                        throwableObject.crash();
                     } else {
                         enemy.energy = 0;
-                        throwableObject.crash();
                     }
+                    throwableObject.crash();
                 }
             });
         });
     }
 
-  
     checkCoinCollisions() {
-        this.coins.forEach((coin, index) => {
+        this.coins = this.coins.filter((coin) => {
             if (this.character.isColliding(coin)) {
-                this.coins.splice(index, 1);
                 this.character.coins += 1;
                 this.coinSound.play();
-
-                let percentage = this.character.coins * 5;
-                if (percentage > 100) percentage = 100;
+                const percentage = Math.min(this.character.coins * 3, 100);
                 this.statusBarCoins.setPercentage(percentage);
+                return false;
             }
+            return true;
         });
     }
-
 
     checkBottleCollisions() {
-        this.bottles.forEach((bottle, index) => {
+        this.bottles = this.bottles.filter((bottle) => {
             if (this.character.isColliding(bottle)) {
-                this.bottles.splice(index, 1);
                 this.character.bottles += 5;
                 this.collectBottle.play();
-                let percentage = this.character.bottles * 5;
-                if (percentage > 100) percentage = 100;
+                const percentage = Math.min(this.character.bottles * 5, 100);
                 this.statusBarBottles.setPercentage(percentage);
+                return false;
             }
+            return true;
         });
     }
-
 
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1);
-        mo.x = mo.x * -1;
+        mo.x *= -1;
     }
 
-
     flipImageBack(mo) {
-        mo.x = mo.x * -1;
+        mo.x *= -1;
         this.ctx.restore();
     }
 }
