@@ -12,6 +12,8 @@ class Character extends MovableObject {
     jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
     sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav');
     lastActionTime = Date.now();
+    wasJumping = false;
+
     world;
     offset = { top: 101, bottom: 10, left: 10, right: 15 };
 
@@ -186,16 +188,39 @@ class Character extends MovableObject {
      * Determines which animation to play based on character state.
      * @param {number} timeSinceLastAction - Seconds since last user action
      */
-    handleAnimations(timeSinceLastAction) {
-        const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
-        const isJumping = this.isAboveGround();
+ handleAnimations(timeSinceLastAction) {
+    const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+    const isJumping = this.isAboveGround();
 
-        if (this.isDead()) this.handleDead();
-        else if (this.isHurt()) this.handleHurt();
-        else if (isJumping) this.playAnimation(this.IMAGES_JUMPING);
-        else if (isMoving) this.playAnimation(this.IMAGES_WALKING);
-        else this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+    if (this.isDead()) {
+        this.handleDead();
+        this.wasJumping = false;
+        return;
     }
+
+    if (this.isHurt()) {
+        this.handleHurt();
+        this.wasJumping = false;
+        return;
+    }
+
+    if (isJumping) {
+        if (!this.wasJumping) {
+            this.wasJumping = true;
+            this.playAnimation(this.IMAGES_JUMPING); // Nur 1x starten
+        }
+        return;
+    } else {
+        this.wasJumping = false;
+    }
+
+    if (isMoving) {
+        this.playAnimation(this.IMAGES_WALKING);
+        return;
+    }
+
+    this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+}
 
     /**
      * Plays dead animation and sets game over state.

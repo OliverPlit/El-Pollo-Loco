@@ -7,6 +7,9 @@ class Chicken extends MovableObject {
     y = 370;
     energy = 1;
     isDead = false;
+    moveInterval;
+walkInterval;
+deathCheckInterval;
     deadChicken = new Audio('audio/170807__esperar__angry-chicken-imitation.wav');
 
     IMAGES_WALKING = [
@@ -30,7 +33,11 @@ class Chicken extends MovableObject {
         this.animate();
         window.soundManager.addSound(this.deadChicken);
     }
-
+stopAllAnimations() {
+    clearInterval(this.moveInterval);
+    clearInterval(this.walkInterval);
+    clearInterval(this.deathCheckInterval);
+}
     /**
      * Starts all animation intervals for movement, walking, and death detection.
      */
@@ -44,35 +51,32 @@ class Chicken extends MovableObject {
      * Continuously moves the chicken to the left.
      */
     startMoving() {
-        setInterval(() => {
+    this.moveInterval = setInterval(() => {
+        if (!this.isDead) {
             this.moveLeft();
-        }, 1000 / 60);
-    }
+        }
+    }, 1000 / 60);
+}
 
-    /**
-     * Plays walking animation if chicken is alive.
-     */
-    startWalkingAnimation() {
-        setInterval(() => {
-            if (this.energy > 0) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }, 100);
-    }
+startWalkingAnimation() {
+    this.walkInterval = setInterval(() => {
+        if (this.energy > 0) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }, 100);
+}
 
-    /**
-     * Checks if the chicken is dead and triggers death sequence.
-     */
-    startDeathCheck() {
-        setInterval(() => {
-            if (this.energy == 0 && !this.isDead) {
-                this.loadImage(this.IMAGES_DEAD[0]);
-                this.deadChicken.play();
-                this.isDead = true;
-                this.removeAfterDelay();
-            }
-        }, 100);
-    }
+startDeathCheck() {
+    this.deathCheckInterval = setInterval(() => {
+        if (this.energy == 0 && !this.isDead) {
+            this.loadImage(this.IMAGES_DEAD[0]);
+            this.deadChicken.play();
+            this.isDead = true;
+            this.stopAllAnimations(); // <- HIER wichtig!
+            this.removeAfterDelay();
+        }
+    }, 100);
+}
 
     /**
      * Removes the chicken from the enemy array after a short delay.

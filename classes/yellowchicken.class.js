@@ -20,6 +20,10 @@ class YellowChicken extends MovableObject {
 
     /** @type {boolean} Flag if chicken is dead */
     isDead = false;
+    moveInterval;
+    walkInterval;
+    deathCheckInterval;
+    jumpInterval;
 
     /** @type {Audio} Sound to play when chicken dies */
     isDeadSound = new Audio('audio/11568__samplecat__squeak-duck4.wav');
@@ -59,6 +63,13 @@ class YellowChicken extends MovableObject {
         window.soundManager.addSound(this.isDeadSound);
     }
 
+
+    stopAllAnimations() {
+    clearInterval(this.moveInterval);
+    clearInterval(this.walkInterval);
+    clearInterval(this.deathCheckInterval);
+    clearInterval(this.jumpInterval);
+}
     /**
      * Checks if the chicken is above ground (can jump).
      * @returns {boolean} True if chicken is in the air.
@@ -83,14 +94,15 @@ class YellowChicken extends MovableObject {
      * Moves the chicken continuously to the left.
      */
     startMoving() {
-        setInterval(() => this.moveLeft(), 1000 / 60);
-    }
+    this.moveInterval = setInterval(() => {
+        if (!this.isDead) {
+            this.moveLeft();
+        }
+    }, 1000 / 60);
+}
 
-    /**
-     * Plays walking animation while chicken is alive.
-     */
     startWalkingAnimation() {
-        setInterval(() => {
+        this.walkInterval = setInterval(() => {
             if (this.energy > 0) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
@@ -101,20 +113,23 @@ class YellowChicken extends MovableObject {
      * Regularly checks if chicken is dead and triggers death behavior.
      */
     startDeathCheck() {
-        setInterval(() => this.checkDeath(), 100);
+        this.deathCheckInterval = setInterval(() => this.checkDeath(), 100);
     }
+
+
 
     /**
      * Handles death: changes image, plays sound, flags dead, schedules removal.
      */
-    checkDeath() {
-        if (this.energy == 0 && !this.isDead) {
-            this.loadImage(this.IMAGES_DEAD[0]);
-            this.isDeadSound.play();
-            this.isDead = true;
-            this.removeFromWorldAfterDelay();
-        }
+ checkDeath() {
+    if (this.energy == 0 && !this.isDead) {
+        this.loadImage(this.IMAGES_DEAD[0]);
+        this.isDeadSound.play();
+        this.isDead = true;
+        this.stopAllAnimations(); // <- WICHTIG
+        this.removeFromWorldAfterDelay();
     }
+}
 
     /**
      * Removes the chicken from the world's enemy array after a delay.
@@ -132,7 +147,7 @@ class YellowChicken extends MovableObject {
      * Periodically makes the chicken jump if it is on the ground.
      */
     jumpLoop() {
-        setInterval(() => {
+        this.jumpInterval = setInterval(() => {
             if (!this.isAboveGround()) {
                 this.jump();
             }

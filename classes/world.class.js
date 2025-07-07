@@ -171,8 +171,8 @@ class World {
         const now = new Date().getTime();
         const cooldown = 1000;
         if (this.keyboard.D && this.character.bottles > 0 && now - this.lastBottleThrowTime > cooldown) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
-            this.throwableObjects.push(bottle);
+let offsetX = this.character.otherDirection ? -50 : 100;
+let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, this.character.otherDirection);            this.throwableObjects.push(bottle);
             this.character.bottles--;
             let percentage = (this.character.bottles / 20) * 100;
             this.statusBarBottles.setPercentage(percentage);

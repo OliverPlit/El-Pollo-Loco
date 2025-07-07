@@ -16,34 +16,37 @@
 
         }
     </style>
-    <script src="./classes/sounds.class.js"></script>
 
-    <script src="./classes/world.class.js"></script>
+   <script src="./classes/drawable-object.class.js"></script>
+<script src="./classes/movable-object.class.js"></script>
 
-    <script src="./classes/drawable-object.class.js"></script>
-    <script src="./classes/movable-object.class.js"></script>
-    <script src="./classes/status-bar.class.js"></script>
-    <script src="./classes/coins.class.js"></script>
+<!-- Abgeleitete Objekte -->
+<script src="./classes/character.class.js"></script>
+<script src="./classes/chicken.class.js"></script>
+<script src="./classes/yellowchicken.class.js"></script>
+<script src="./classes/endboss.class.js"></script>
+<script src="./classes/bottle.class.js"></script>
+<script src="./classes/throwable-object.class.js"></script>
+<script src="./classes/coins.class.js"></script>
+<script src="./classes/cloud.class.js"></script>
+<script src="./classes/background-object.class.js"></script>
 
-    <script src="./classes/chicken.class.js"></script>
-    <script src="./classes/character.class.js"></script>
-    <script src="./classes/cloud.class.js"></script>
-    <script src="./classes/keyboard.class.js"></script>
-    <script src="./classes/level.class.js"></script>
-    <script src="./classes/endboss.class.js"></script>
-    <script src="./classes/throwable-object.class.js"></script>
-    <script src="./classes/buttons.class.js"></script>
-    <script src="./classes/bottle.class.js"></script>
-    <script src="./classes/yellowchicken.class.js"></script>
+<!-- Game-UI/Logik -->
+<script src="./classes/status-bar.class.js"></script>
+<script src="./classes/buttons.class.js"></script>
+<script src="./classes/keyboard.class.js"></script>
+<script src="./classes/world.class.js"></script>
+<script src="./classes/sounds.class.js"></script>
 
-    <script src="./classes/background-object.class.js"></script>
+<!-- Level-Definition -->
+<script src="./classes/level.class.js"></script>
+<script src="./levels/level1.js"></script>
 
-    <script src="./levels/level1.js"></script>
-    <script src="./js/game.js"></script>
+<!-- Spiel-Initialisierung (immer zuletzt) -->
 
 </head>
 
-<body onload="init()">
+<body>
     <div class="fullscreen">
         <img src="./assets/img/background_main/4272099.jpg" alt="" class="background_img">
 
@@ -53,9 +56,6 @@
             <canvas width="720" height="480" id="canvas">
 
             </canvas>
-            <div class="start_button_div">
-                <button id="startButton" onclick="startGame()" class="start_button">Start</button>
-            </div>
 
 
             <div id="icons" class="icons_start">
@@ -77,7 +77,7 @@
                     onclick="backToStart()">
 
             </div>
-            <div id="mobileControls">
+            <div id="mobileControls" style="display: none;">
                 <button onclick="pressKey('LEFT')">←</button>
                 <button onclick="pressKey('J')">J</button>
                 <button onclick="pressKey('SPACE')">Space</button>
@@ -99,6 +99,8 @@
     <audio src="./audio/chill-gaming-vibes-332248.mp3" id="startSound"></audio>
 
 </body>
+<script src="./js/game.js"></script>
+
 <script src="./script.js"></script>
 
 </html>

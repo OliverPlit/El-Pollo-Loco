@@ -7,11 +7,11 @@ let showExplanation = false;
  * @type {boolean} Flag to toggle the intro overlay on the start screen 
  */
 let showIntro = false;
+let isAudioMuted = localStorage.getItem('audioMuted') === 'true';
 
 /** 
  * @type {boolean} Flag indicating whether audio is muted 
  */
-let isAudioMuted = false;
 
 /** 
  * @type {Audio[]} Array to hold all sound objects for global control 
@@ -114,7 +114,10 @@ function drawIntro(ctx) {
  */
 function startSound() {
     const backgroundAudio = document.getElementById('startSound');
-    backgroundAudio.play();
+    if (!isAudioMuted) {
+        backgroundAudio.play();
+    }
+
 }
 
 /**
@@ -131,16 +134,20 @@ function startAudio() {
 function toggleAudio() {
     const iconOn = './assets/img/icons/speaker-filled-audio-tool.png';
     const iconOff = 'assets/img/icons/sound-off.png';
-    if (window.soundManager.isMuted) {
-        backgroundAudio.play();
-        window.soundManager.unmuteAll();
-        audioImg.src = iconOn;
-    } else {
+
+    isAudioMuted = !isAudioMuted;
+
+    if (isAudioMuted) {
         backgroundAudio.pause();
         backgroundAudio.currentTime = 0;
         window.soundManager.muteAll();
         audioImg.src = iconOff;
+    } else {
+        backgroundAudio.play();
+        window.soundManager.unmuteAll();
+        audioImg.src = iconOn;
     }
+    localStorage.setItem('audioMuted', isAudioMuted);
 }
 
 /**

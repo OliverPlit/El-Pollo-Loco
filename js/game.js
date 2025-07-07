@@ -17,6 +17,10 @@ let keyboard = new Keyboard();
  * Initializes the game by setting up the canvas, loading the start screen image,
  * and adding event listeners for the start button.
  */
+
+
+window.addEventListener('load', init);
+
 function init() {
   const canvas = document.getElementById('canvas');
   ctx = canvas.getContext('2d');
@@ -24,8 +28,39 @@ function init() {
   startImage.src = 'assets/img/9_intro_outro_screens/start/startscreen_1.png';
   startImage.onload = () => {
     loadStartScreen();
+      canvas.addEventListener('click', handleCanvasClick);
+
   };
-  document.getElementById('startButton').addEventListener('click', startGame);
+}
+
+/**
+ * Loads and displays the start screen, and shows related UI elements.
+ */
+function loadStartScreen() {
+  drawStartScreen();
+  document.getElementById('fullscreen').style.display = 'flex';
+  document.getElementById('audio').style.display = 'flex';
+  document.getElementById('legend').style.display = 'flex';
+  document.getElementById('statement').style.display = 'flex';
+}
+
+/**
+ * Draws the start screen on the canvas.
+ * Also overlays explanation or intro if the corresponding flags are set.
+ */
+/**
+ * Handles canvas clicks for the "Start Game" button.
+ * @param {MouseEvent} event 
+ */
+function handleCanvasClick(event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  // Gleiche Position wie der gezeichnete Button
+  if (x >= 60 && x <= 160 && y >= 30 && y <= 80 && !world) {
+    startGame();
+  }
 }
 
 /**
@@ -47,6 +82,8 @@ function drawStartScreen() {
   if (!startImage) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
+  drawStartButton(ctx); // 👈 Button auf Canvas zeichnen
+
   if (showExplanation) {
     drawExplanationOverlayBeforeStart(ctx);
   }
@@ -55,6 +92,54 @@ function drawStartScreen() {
   }
 }
 
+/**
+ * Zeichnet den "Start Game"-Button auf dem Canvas
+ */
+function drawStartButton(ctx) {
+  const x = 60;
+  const y = 30;
+  const width = 100;
+  const height = 50;
+  const radius = 20;
+
+  // Schatten
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 4;
+
+  // Hintergrund (mit abgerundeten Ecken)
+  drawRoundedRect(ctx, x, y, width, height, radius);
+  ctx.fillStyle = '#ff9247';
+  ctx.fill();
+
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'white';
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle = 'white';
+  ctx.font = '30px "zabras", Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Start', x + width / 2, y + height / 2);
+}
+
+
+
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
 /**
  * Starts the game by creating the world and level,
  * starting enemy animations,
@@ -68,13 +153,13 @@ function startGame() {
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   world.level.enemies.forEach(enemy => enemy.animate());
-  document.getElementById('startButton').style.display = 'none';
-  document.getElementById('fullscreen').style.display = 'none';
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
   document.getElementById('pause').style.display = 'flex';
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';
+  document.getElementById('mobileControls').style.display = 'flex';
+
   startSound();
 }
 
@@ -92,7 +177,6 @@ function backToStart() {
   drawStartScreen();
   showExplanation = false;
   showIntro = false;
-  document.getElementById('startButton').style.display = 'block';
   document.getElementById('fullscreen').style.display = 'flex';
   document.getElementById('audio').style.display = 'flex';
   document.getElementById('legend').style.display = 'flex';
@@ -100,6 +184,8 @@ function backToStart() {
   document.getElementById('pause').style.display = 'none';
   document.getElementById('back').style.display = 'none';
   document.getElementById('window_back').style.display = 'none';
+  document.getElementById('mobileControls').style.display = 'none';
+
 }
 
 /**
