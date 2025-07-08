@@ -150,6 +150,7 @@ function startGame() {
     world.stopGameLoop();
     world = null;
   }
+  startSound();
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   world.level.enemies.forEach(enemy => enemy.animate());
@@ -158,7 +159,7 @@ function startGame() {
   document.getElementById('pause').style.display = 'flex';
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';
-  document.getElementById('mobileControls').style.display = 'flex';
+  document.getElementById('mobileControls').classList.add('visible');
 
   startSound();
 }

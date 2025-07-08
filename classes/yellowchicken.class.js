@@ -24,6 +24,8 @@ class YellowChicken extends MovableObject {
     walkInterval;
     deathCheckInterval;
     jumpInterval;
+    isAnimationPaused = false;
+
 
     /** @type {Audio} Sound to play when chicken dies */
     isDeadSound = new Audio('audio/11568__samplecat__squeak-duck4.wav');
@@ -56,18 +58,14 @@ class YellowChicken extends MovableObject {
         this.muteSounds();
     }
     stopAllAnimations() {
-        clearInterval(this.moveInterval);
-        clearInterval(this.walkInterval);
-        clearInterval(this.deathCheckInterval);
-        this.stopAnimation();
-    }
+    this.isAnimationPaused = true;
+    clearInterval(this.moveInterval);
+    clearInterval(this.walkInterval);
+    clearInterval(this.deathCheckInterval);
+    clearInterval(this.jumpInterval);
+}
 
-    stopAnimation() {
-        if (this.animationInterval) {
-            clearInterval(this.animationInterval);
-            this.animationInterval = null;
-        }
-    }
+   
     /**
      * Registers the death sound with the global sound manager.
      */
@@ -76,12 +74,7 @@ class YellowChicken extends MovableObject {
     }
 
 
-    stopAllAnimations() {
-        clearInterval(this.moveInterval);
-        clearInterval(this.walkInterval);
-        clearInterval(this.deathCheckInterval);
-        clearInterval(this.jumpInterval);
-    }
+  
     /**
      * Checks if the chicken is above ground (can jump).
      * @returns {boolean} True if chicken is in the air.

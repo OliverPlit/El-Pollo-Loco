@@ -22,7 +22,10 @@ class World {
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
     requestAnimationFrameID;
     frameSkipCounter = 0;
-    frameSkipRate = 2; // Render nur jedes zweite Frame
+    frameSkipRate = 2; 
+    hasPlayedLoseSound = false;
+windowBackShown = false;
+
 
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
@@ -102,8 +105,6 @@ class World {
         this.requestAnimationFrameID = requestAnimationFrame(() => this.draw());
 
         if (this.paused || !this.active) return;
-
-        // Frameskipping
         if (this.frameSkipCounter++ % this.frameSkipRate !== 0) return;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -144,15 +145,24 @@ class World {
     }
 
     closeGameBecauseLose() {
-        const windowBack = document.getElementById('window_back');
-        const backgroundSound = document.getElementById('startSound');
-        this.ctx.translate(-this.camera_x, 0);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const windowBack = document.getElementById('window_back');
+    const backgroundSound = document.getElementById('startSound');
+    this.ctx.translate(-this.camera_x, 0);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    if (!this.hasPlayedLoseSound) {
         this.loseSound.play();
         backgroundSound.pause();
-        setTimeout(() => windowBack.style.display = 'flex', 1000);
-        this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
+        this.hasPlayedLoseSound = true;
     }
+
+    this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
+  if (!this.windowBackShown) {
+        setTimeout(() => {
+            windowBack.style.display = 'flex';
+        }, 1000);
+        this.windowBackShown = true;
+    }}
 
     addObjectsToMap(objects) {
         objects.forEach(o => this.addtoMap(o));
@@ -165,24 +175,18 @@ class World {
     }
 
     stopGameLoop() {
-    // Stoppt die Intervall-Checks für Kollisionen etc.
     if (this.checkCollisionsInterval) {
         clearInterval(this.checkCollisionsInterval);
         this.checkCollisionsInterval = null;
     }
 
-    // Stoppt den RequestAnimationFrame Loop
     if (this.requestAnimationFrameID) {
         cancelAnimationFrame(this.requestAnimationFrameID);
         this.requestAnimationFrameID = null;
     }
 
-    // Stoppt alle Gegneranimationen (Chicken, YellowChicken etc.)
-    this.level.enemies.forEach(enemy => {
-        if (enemy.stopAllAnimations) {
-            enemy.stopAllAnimations();
-        }
-    });
+   
+    MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = true);
 
     this.active = false;
     this.paused = true;
@@ -193,11 +197,9 @@ resumeGameLoop() {
 
     if (!this.requestAnimationFrameID) this.draw();
 
-    this.level.enemies.forEach(enemy => {
-        if (enemy.startAllAnimations) {
-            enemy.startAllAnimations();
-        }
-    });
+
+
+    MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = false);
 
     this.paused = false;
     this.active = true;

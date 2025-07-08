@@ -10,6 +10,8 @@ class Chicken extends MovableObject {
     moveInterval;
 walkInterval;
 deathCheckInterval;
+isAnimationPaused = false;
+
     deadChicken = new Audio('audio/170807__esperar__angry-chicken-imitation.wav');
 
     IMAGES_WALKING = [
@@ -34,26 +36,12 @@ deathCheckInterval;
         window.soundManager.addSound(this.deadChicken);
     }
 stopAllAnimations() {
+    this.isAnimationPaused = true;
     clearInterval(this.moveInterval);
     clearInterval(this.walkInterval);
     clearInterval(this.deathCheckInterval);
-    this.stopAnimation();
-}
-
-stopAnimation() {
-    if (this.animationInterval) {
-        clearInterval(this.animationInterval);
-        this.animationInterval = null;
-    }
-}
-
-startAllAnimations() {
-       if (!this.animationInterval) { // Nur starten, wenn nicht schon aktiv
-        this.playAnimation(this.IMAGES_WALKING);
-    }
-}
-
-
+    clearInterval(this.jumpInterval);
+   }
     /**
      * Starts all animation intervals for movement, walking, and death detection.
      */

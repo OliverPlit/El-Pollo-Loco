@@ -17,9 +17,11 @@ class MovableObject extends DrawableObject {
 
     /** @type {number} Current energy (health) of the object */
     energy = 100;
+    static allMovables = []; // Liste aller Instanzen
 
     /** @type {number} Timestamp of the last time the object was hit */
     lastHit = 0;
+    isAnimatedPaused = false;
 
     /** @type {Audio} Sound played when the object is hurt */
     hurtSound = new Audio('./audio/515624__mrickey13__playerhurt2.wav');
@@ -30,6 +32,8 @@ class MovableObject extends DrawableObject {
     constructor() {
         super();
         window.soundManager.addSound(this.hurtSound);
+                MovableObject.allMovables.push(this); // automatisch registrieren
+
     }
 
     /**
@@ -48,7 +52,10 @@ class MovableObject extends DrawableObject {
      * Makes the object jump by setting an upward vertical speed.
      */
     jump() {
+        if (!this.isAnimatedPaused) {
         this.speedY = 20;
+
+        }
     }
 
     /**
@@ -95,7 +102,7 @@ class MovableObject extends DrawableObject {
      * Applies damage to the object, reducing energy and updating last hit time.
      */
   hit() {
-    this.energy -= 10;
+    this.energy -= 100;
     if (this.energy < 0) this.energy = 0;
     this.lastHit = new Date().getTime();
 }
@@ -129,7 +136,10 @@ class MovableObject extends DrawableObject {
      * Moves the object to the left by its speed.
      */
     moveLeft() {
-        this.x -= this.speed;
+        if (!this.isAnimatedPaused) {
+                    this.x -= this.speed;
+
+        }
     }
 
     /**
