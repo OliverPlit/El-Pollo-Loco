@@ -66,7 +66,7 @@ class Endboss extends MovableObject {
     constructor(world) {
         super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
         this.statusBar = new StatusBar('endboss');
-        this.speed = 3;
+        this.speed = 7;
         this.world = world;
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_ALERT);

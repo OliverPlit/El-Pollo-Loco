@@ -185,7 +185,6 @@ function backToStart() {
   document.getElementById('back').style.display = 'none';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').style.display = 'none';
-
 }
 
 /**

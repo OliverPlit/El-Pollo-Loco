@@ -55,9 +55,19 @@ class YellowChicken extends MovableObject {
         this.jumpLoop();
         this.muteSounds();
     }
-stopAnimation() {
-  clearInterval(this.animationInterval);
-}
+    stopAllAnimations() {
+        clearInterval(this.moveInterval);
+        clearInterval(this.walkInterval);
+        clearInterval(this.deathCheckInterval);
+        this.stopAnimation();
+    }
+
+    stopAnimation() {
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+        }
+    }
     /**
      * Registers the death sound with the global sound manager.
      */
@@ -67,11 +77,11 @@ stopAnimation() {
 
 
     stopAllAnimations() {
-    clearInterval(this.moveInterval);
-    clearInterval(this.walkInterval);
-    clearInterval(this.deathCheckInterval);
-    clearInterval(this.jumpInterval);
-}
+        clearInterval(this.moveInterval);
+        clearInterval(this.walkInterval);
+        clearInterval(this.deathCheckInterval);
+        clearInterval(this.jumpInterval);
+    }
     /**
      * Checks if the chicken is above ground (can jump).
      * @returns {boolean} True if chicken is in the air.
@@ -96,12 +106,12 @@ stopAnimation() {
      * Moves the chicken continuously to the left.
      */
     startMoving() {
-    this.moveInterval = setInterval(() => {
-        if (!this.isDead) {
-            this.moveLeft();
-        }
-    }, 1000 / 60);
-}
+        this.moveInterval = setInterval(() => {
+            if (!this.isDead) {
+                this.moveLeft();
+            }
+        }, 1000 / 60);
+    }
 
     startWalkingAnimation() {
         this.walkInterval = setInterval(() => {
@@ -123,15 +133,15 @@ stopAnimation() {
     /**
      * Handles death: changes image, plays sound, flags dead, schedules removal.
      */
- checkDeath() {
-    if (this.energy == 0 && !this.isDead) {
-        this.loadImage(this.IMAGES_DEAD[0]);
-        this.isDeadSound.play();
-        this.isDead = true;
-        this.stopAllAnimations(); // <- WICHTIG
-        this.removeFromWorldAfterDelay();
+    checkDeath() {
+        if (this.energy == 0 && !this.isDead) {
+            this.loadImage(this.IMAGES_DEAD[0]);
+            this.isDeadSound.play();
+            this.isDead = true;
+            this.stopAllAnimations(); // <- WICHTIG
+            this.removeFromWorldAfterDelay();
+        }
     }
-}
 
     /**
      * Removes the chicken from the world's enemy array after a delay.

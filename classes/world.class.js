@@ -165,30 +165,43 @@ class World {
     }
 
     stopGameLoop() {
-        if (this.checkCollisionsInterval) {
-            clearInterval(this.checkCollisionsInterval);
-            this.checkCollisionsInterval = null;
-        }
-        if (this.requestAnimationFrameID) {
-            cancelAnimationFrame(this.requestAnimationFrameID);
-            this.requestAnimationFrameID = null;
-        }
-
-        this.level.enemies.forEach(enemy => {
-    if (enemy.stopAllAnimations) {
-        enemy.stopAllAnimations();
-    }
-});
-        this.active = false;
-        this.paused = true;
+    // Stoppt die Intervall-Checks für Kollisionen etc.
+    if (this.checkCollisionsInterval) {
+        clearInterval(this.checkCollisionsInterval);
+        this.checkCollisionsInterval = null;
     }
 
-    resumeGameLoop() {
-        if (!this.checkCollisionsInterval) this.run();
-        if (!this.requestAnimationFrameID) this.draw();
-        this.paused = false;
-        this.active = true;
+    // Stoppt den RequestAnimationFrame Loop
+    if (this.requestAnimationFrameID) {
+        cancelAnimationFrame(this.requestAnimationFrameID);
+        this.requestAnimationFrameID = null;
     }
+
+    // Stoppt alle Gegneranimationen (Chicken, YellowChicken etc.)
+    this.level.enemies.forEach(enemy => {
+        if (enemy.stopAllAnimations) {
+            enemy.stopAllAnimations();
+        }
+    });
+
+    this.active = false;
+    this.paused = true;
+}
+
+resumeGameLoop() {
+    if (!this.checkCollisionsInterval) this.run();
+
+    if (!this.requestAnimationFrameID) this.draw();
+
+    this.level.enemies.forEach(enemy => {
+        if (enemy.startAllAnimations) {
+            enemy.startAllAnimations();
+        }
+    });
+
+    this.paused = false;
+    this.active = true;
+}
 
     checkCollisions() {
         this.checkEnemyCollisions();

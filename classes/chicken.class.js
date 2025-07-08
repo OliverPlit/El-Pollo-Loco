@@ -37,10 +37,20 @@ stopAllAnimations() {
     clearInterval(this.moveInterval);
     clearInterval(this.walkInterval);
     clearInterval(this.deathCheckInterval);
+    this.stopAnimation();
 }
 
 stopAnimation() {
-  clearInterval(this.animationInterval);
+    if (this.animationInterval) {
+        clearInterval(this.animationInterval);
+        this.animationInterval = null;
+    }
+}
+
+startAllAnimations() {
+       if (!this.animationInterval) { // Nur starten, wenn nicht schon aktiv
+        this.playAnimation(this.IMAGES_WALKING);
+    }
 }
 
 

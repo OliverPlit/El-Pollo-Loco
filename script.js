@@ -164,14 +164,19 @@ function showButton() {
 function stopGameplay() {
     const pauseImg = document.getElementById('pause');
     if (!world) return;
-    const isPaused = pauseImg.src.endsWith('play.png');
-    pauseImg.src = isPaused ? './assets/img/icons/pause.png' : './assets/img/icons/play.png';
-    if (isPaused) {
-        world.resumeGameLoop();
-    } else {
+
+    const isCurrentlyPaused = world.paused;
+    const newPausedStatus = !isCurrentlyPaused;
+
+    pauseImg.src = newPausedStatus ? './assets/img/icons/play.png' : './assets/img/icons/pause.png';
+
+    if (newPausedStatus) {
         world.stopGameLoop();
+    } else {
+        world.resumeGameLoop();
     }
-    world.paused = isPaused;
+
+    world.paused = newPausedStatus;
 }
 
 /**
