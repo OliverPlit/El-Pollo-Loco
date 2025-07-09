@@ -81,13 +81,13 @@ function drawExplanationOverlayBeforeStart(ctx) {
     ctx.fillRect(60, 60, 600, 300);
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
-    ctx.fillText('Controls:', 80, 100);
+    ctx.fillText('Controls:', 140, 100);
     ctx.font = '20px Arial';
-    ctx.fillText('← A: Move left', 80, 140);
-    ctx.fillText('→ D: Move right', 80, 170);
-    ctx.fillText('␣ SPACE: Jump', 80, 200);
-    ctx.fillText('D: Throw', 80, 230);
-    ctx.fillText('ESC: Close', 80, 270);
+    ctx.fillText('← : Move left', 170, 140);
+    ctx.fillText('→ : Move right', 180, 180);
+    ctx.fillText('␣ SPACE: Jump', 180, 220);
+    ctx.fillText('D: Throw', 150, 260);
+    ctx.fillText('ESC: Close', 160, 300);
 }
 
 /**
@@ -99,14 +99,14 @@ function drawIntro(ctx) {
     ctx.fillRect(60, 60, 600, 300);
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
-    ctx.fillText('Intro:', 80, 100);
+    ctx.fillText('Intro:', 120, 90);
     ctx.font = '20px Arial';
-    ctx.fillText('Pedro was once a simple man.', 80, 140);
-    ctx.fillText('A taco lover, a sombrero wearer,', 80, 170);
-    ctx.fillText('a quiet fellow with a small chicken farm.', 80, 200);
-    ctx.fillText('Everything was fine – until they came.', 80, 230);
-    ctx.fillText('The crazy chickens led by', 80, 260);
-    ctx.fillText('Chief Hen Gallino rebelled.', 80, 290);
+    ctx.fillText('Pedro was once a simple man.', 245, 140);
+    ctx.fillText('A taco lover, a sombrero wearer,', 250, 170);
+    ctx.fillText('a quiet fellow with a small chicken farm.', 280, 200);
+    ctx.fillText('Everything was fine – until they came.', 270, 230);
+    ctx.fillText('The crazy chickens led by', 220, 260);
+    ctx.fillText('Chief Hen Gallino rebelled.', 220, 290);
 }
 
 /**

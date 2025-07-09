@@ -53,7 +53,7 @@ class MovableObject extends DrawableObject {
      */
     jump() {
         if (!this.isAnimatedPaused) {
-        this.speedY = 20;
+        this.speedY = 25;
 
         }
     }
@@ -102,7 +102,7 @@ class MovableObject extends DrawableObject {
      * Applies damage to the object, reducing energy and updating last hit time.
      */
   hit() {
-    this.energy -= 100;
+    this.energy -= 10;
     if (this.energy < 0) this.energy = 0;
     this.lastHit = new Date().getTime();
 }

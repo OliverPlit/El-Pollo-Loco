@@ -33,6 +33,31 @@ function init() {
   };
 }
 
+function fullscreen() {
+  const fullscreenDiv = document.getElementById('fullscreenmake');
+  enterFullscreen(fullscreenDiv);
+}
+
+function enterFullscreen(element) {
+  if(element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if(element.msRequestFullscreen) {      // for IE11 (remove June 15, 2022)
+    element.msRequestFullscreen();
+  } else if(element.webkitRequestFullscreen) {  // iOS Safari
+    element.webkitRequestFullscreen();
+  }
+}
+
+
+function exitFullscreen() {
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
+
+
 /**
  * Loads and displays the start screen, and shows related UI elements.
  */
@@ -54,10 +79,13 @@ function loadStartScreen() {
  */
 function handleCanvasClick(event) {
   const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
 
-  // Gleiche Position wie der gezeichnete Button
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+
+  const x = (event.clientX - rect.left) * scaleX;
+  const y = (event.clientY - rect.top) * scaleY;
+
   if (x >= 60 && x <= 160 && y >= 30 && y <= 80 && !world) {
     startGame();
   }
@@ -82,7 +110,7 @@ function drawStartScreen() {
   if (!startImage) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
-  drawStartButton(ctx); // 👈 Button auf Canvas zeichnen
+  drawStartButton(ctx); 
 
   if (showExplanation) {
     drawExplanationOverlayBeforeStart(ctx);
@@ -92,9 +120,6 @@ function drawStartScreen() {
   }
 }
 
-/**
- * Zeichnet den "Start Game"-Button auf dem Canvas
- */
 function drawStartButton(ctx) {
   const x = 60;
   const y = 30;
@@ -102,14 +127,12 @@ function drawStartButton(ctx) {
   const height = 50;
   const radius = 20;
 
-  // Schatten
   ctx.save();
   ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
   ctx.shadowBlur = 6;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 4;
 
-  // Hintergrund (mit abgerundeten Ecken)
   drawRoundedRect(ctx, x, y, width, height, radius);
   ctx.fillStyle = '#ff9247';
   ctx.fill();

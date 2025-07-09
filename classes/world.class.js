@@ -22,9 +22,9 @@ class World {
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
     requestAnimationFrameID;
     frameSkipCounter = 0;
-    frameSkipRate = 2; 
+    frameSkipRate = 2;
     hasPlayedLoseSound = false;
-windowBackShown = false;
+    windowBackShown = false;
 
 
     constructor(canvas, keyboard, level) {
@@ -98,6 +98,8 @@ windowBackShown = false;
             this.character.bottles--;
             this.statusBarBottles.setPercentage((this.character.bottles / 20) * 100);
             this.lastBottleThrowTime = now;
+            this.character.lastActionTime = now;
+
         }
     }
 
@@ -145,24 +147,25 @@ windowBackShown = false;
     }
 
     closeGameBecauseLose() {
-    const windowBack = document.getElementById('window_back');
-    const backgroundSound = document.getElementById('startSound');
-    this.ctx.translate(-this.camera_x, 0);
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const windowBack = document.getElementById('window_back');
+        const backgroundSound = document.getElementById('startSound');
+        this.ctx.translate(-this.camera_x, 0);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    if (!this.hasPlayedLoseSound) {
-        this.loseSound.play();
-        backgroundSound.pause();
-        this.hasPlayedLoseSound = true;
+        if (!this.hasPlayedLoseSound) {
+            this.loseSound.play();
+            backgroundSound.pause();
+            this.hasPlayedLoseSound = true;
+        }
+
+        this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
+        if (!this.windowBackShown) {
+            setTimeout(() => {
+                windowBack.style.display = 'flex';
+            }, 1000);
+            this.windowBackShown = true;
+        }
     }
-
-    this.ctx.drawImage(this.character.loseImage, 0, 0, this.canvas.width, this.canvas.height);
-  if (!this.windowBackShown) {
-        setTimeout(() => {
-            windowBack.style.display = 'flex';
-        }, 1000);
-        this.windowBackShown = true;
-    }}
 
     addObjectsToMap(objects) {
         objects.forEach(o => this.addtoMap(o));
@@ -175,35 +178,35 @@ windowBackShown = false;
     }
 
     stopGameLoop() {
-    if (this.checkCollisionsInterval) {
-        clearInterval(this.checkCollisionsInterval);
-        this.checkCollisionsInterval = null;
+        if (this.checkCollisionsInterval) {
+            clearInterval(this.checkCollisionsInterval);
+            this.checkCollisionsInterval = null;
+        }
+
+        if (this.requestAnimationFrameID) {
+            cancelAnimationFrame(this.requestAnimationFrameID);
+            this.requestAnimationFrameID = null;
+        }
+
+
+        MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = true);
+
+        this.active = false;
+        this.paused = true;
     }
 
-    if (this.requestAnimationFrameID) {
-        cancelAnimationFrame(this.requestAnimationFrameID);
-        this.requestAnimationFrameID = null;
+    resumeGameLoop() {
+        if (!this.checkCollisionsInterval) this.run();
+
+        if (!this.requestAnimationFrameID) this.draw();
+
+
+
+        MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = false);
+
+        this.paused = false;
+        this.active = true;
     }
-
-   
-    MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = true);
-
-    this.active = false;
-    this.paused = true;
-}
-
-resumeGameLoop() {
-    if (!this.checkCollisionsInterval) this.run();
-
-    if (!this.requestAnimationFrameID) this.draw();
-
-
-
-    MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = false);
-
-    this.paused = false;
-    this.active = true;
-}
 
     checkCollisions() {
         this.checkEnemyCollisions();
@@ -221,13 +224,23 @@ resumeGameLoop() {
 
                 if (isJumpingOnEnemy) {
                     enemy.energy = 0;
-                    this.character.speedY = 25;
+                    this.character.speedY = 30;
                     this.character.y = 155;
                 } else if (enemy.energy > 0) {
                     const now = Date.now();
                     const timePassed = (now - this.character.lastHit) / 1000;
                     if (timePassed > 2 || this.character.lastHit === 0) {
-                        this.character.hit();
+                        if (enemy instanceof Endboss) {
+                            this.character.energy -= 30;
+                            console.log(this.character.energy);
+
+                        } else {
+                            this.character.hit();
+                            
+                        }
+                        if (this.character.energy < 0) {
+                                this.character.energy = 0;
+                            }
                         this.statusBarHealth.setPercentage(this.character.energy);
                     }
                 }
