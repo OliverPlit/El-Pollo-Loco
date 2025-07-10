@@ -20,7 +20,6 @@
     <script src="./classes/drawable-object.class.js"></script>
     <script src="./classes/movable-object.class.js"></script>
 
-    <!-- Abgeleitete Objekte -->
     <script src="./classes/character.class.js"></script>
     <script src="./classes/chicken.class.js"></script>
     <script src="./classes/yellowchicken.class.js"></script>
@@ -31,29 +30,27 @@
     <script src="./classes/cloud.class.js"></script>
     <script src="./classes/background-object.class.js"></script>
 
-    <!-- Game-UI/Logik -->
     <script src="./classes/status-bar.class.js"></script>
     <script src="./classes/buttons.class.js"></script>
     <script src="./classes/keyboard.class.js"></script>
     <script src="./classes/world.class.js"></script>
     <script src="./classes/sounds.class.js"></script>
 
-    <!-- Level-Definition -->
     <script src="./classes/level.class.js"></script>
     <script src="./levels/level1.js"></script>
 
-    <!-- Spiel-Initialisierung (immer zuletzt) -->
 
 </head>
 
 <body>
     <div class="fullscreen">
         <img src="./assets/img/background_main/4272099.jpg" alt="" class="background_img">
-
-
-        <div class="canva_main_div">
+        <div class="h1_div">
             <h1>El pollo loco</h1>
-            <div id="fullscreenmake">
+        </div>
+        <div class="canva_main_div" id="fullscreenmake">
+
+            <div class="relative">
                 <canvas width="720" height="480" id="canvas">
 
                 </canvas>
@@ -63,7 +60,7 @@
                     <img id="audio" src="./assets/img/icons/speaker-filled-audio-tool.png" alt="" style="display: none;"
                         onclick="toggleAudio()">
                     <img id="fullscreen" src="./assets/img/icons/expand.png" alt="" style="display: none;"
-                        onclick="fullscreen()">
+                        onclick="toggleFullscreenGame()">
                     <img id="legend" src="./assets/img/icons/game-controller.png" alt=""
                         onclick="toggleExplanationCanvas()">
                     <img id="statement" src="./assets/img/icons/google-docs.png" alt="doc" style="display: none;"
@@ -78,11 +75,18 @@
                         onclick="backToStart()">
 
                 </div>
-                <div id="mobileControls">
-                    <button onclick="pressKey('LEFT')">←</button>
-                    <button onclick="pressKey('J')">J</button>
-                    <button onclick="pressKey('SPACE')">Space</button>
-                    <button onclick="pressKey('RIGHT')">→</button>
+                <div id="mobileControls" style="display: none;">
+                    <button onmousedown="pressKeyDown('LEFT')" onmouseup="pressKeyUp('LEFT')"
+                        ontouchstart="pressKeyDown('LEFT')" ontouchend="pressKeyUp('LEFT')">←</button>
+
+                    <button onmousedown="pressKeyDown('D')" onmouseup="pressKeyUp('D')" ontouchstart="pressKeyDown('D')"
+                        ontouchend="pressKeyUp('D')">D</button>
+
+                    <button onmousedown="pressKeyDown('SPACE')" onmouseup="pressKeyUp('SPACE')"
+                        ontouchstart="pressKeyDown('SPACE')" ontouchend="pressKeyUp('SPACE')">Space</button>
+
+                    <button onmousedown="pressKeyDown('RIGHT')" onmouseup="pressKeyUp('RIGHT')"
+                        ontouchstart="pressKeyDown('RIGHT')" ontouchend="pressKeyUp('RIGHT')">→</button>
                 </div>
 
                 <div id="window_back" class="window_for_back" style="display: none;">
@@ -90,15 +94,18 @@
                         <button class="again" onclick="startGame()">Play</button>
                         <button class="home" onclick="backToStart()">Home</button>
                     </div>
-
-
                 </div>
-                <a href="./legal_notice.html" class="legal-notice">Legal Notice</a>
 
             </div>
+            <div class="h1_div">
 
+                <a href="./legal_notice.html" class="legal-notice" id="legal">Legal Notice</a>
 
+            </div>
         </div>
+
+
+
 
     </div>
 

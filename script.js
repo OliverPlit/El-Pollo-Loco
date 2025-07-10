@@ -77,17 +77,24 @@ function toggleIntro() {
  * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
  */
 function drawExplanationOverlayBeforeStart(ctx) {
+    const boxWidth = canvas.width * 0.8;
+    const boxHeight = canvas.height * 0.5;
+    const boxX = (canvas.width - boxWidth) / 2;
+    const boxY = (canvas.height - boxHeight) / 2;
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(60, 60, 600, 300);
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
     ctx.fillStyle = '#ffffff';
-    ctx.font = '24px Arial';
-    ctx.fillText('Controls:', 140, 100);
-    ctx.font = '20px Arial';
-    ctx.fillText('← : Move left', 170, 140);
-    ctx.fillText('→ : Move right', 180, 180);
-    ctx.fillText('␣ SPACE: Jump', 180, 220);
-    ctx.fillText('D: Throw', 150, 260);
-    ctx.fillText('ESC: Close', 160, 300);
+    ctx.font = `${Math.floor(canvas.height * 0.05)}px Arial`;
+    ctx.fillText('Controls:', boxX + boxWidth * 0.1, boxY + boxHeight * 0.15);
+
+    ctx.font = `${Math.floor(canvas.height * 0.035)}px Arial`;
+    ctx.fillText('← : Move left', boxX + boxWidth * 0.15, boxY + boxHeight * 0.30);
+    ctx.fillText('→ : Move right', boxX + boxWidth * 0.15, boxY + boxHeight * 0.40);
+    ctx.fillText('␣ SPACE: Jump', boxX + boxWidth * 0.15, boxY + boxHeight * 0.50);
+    ctx.fillText('D: Throw', boxX + boxWidth * 0.15, boxY + boxHeight * 0.60);
+    ctx.fillText('ESC: Close', boxX + boxWidth * 0.15, boxY + boxHeight * 0.70);
 }
 
 /**
@@ -95,18 +102,31 @@ function drawExplanationOverlayBeforeStart(ctx) {
  * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
  */
 function drawIntro(ctx) {
+    const boxWidth = canvas.width * 0.8;
+    const boxHeight = canvas.height * 0.5;
+    const boxX = (canvas.width - boxWidth) / 2;
+    const boxY = (canvas.height - boxHeight) / 2;
+
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(60, 60, 600, 300);
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+
     ctx.fillStyle = '#ffffff';
-    ctx.font = '24px Arial';
-    ctx.fillText('Intro:', 120, 90);
-    ctx.font = '20px Arial';
-    ctx.fillText('Pedro was once a simple man.', 245, 140);
-    ctx.fillText('A taco lover, a sombrero wearer,', 250, 170);
-    ctx.fillText('a quiet fellow with a small chicken farm.', 280, 200);
-    ctx.fillText('Everything was fine – until they came.', 270, 230);
-    ctx.fillText('The crazy chickens led by', 220, 260);
-    ctx.fillText('Chief Hen Gallino rebelled.', 220, 290);
+    ctx.font = `${Math.floor(canvas.height * 0.05)}px Arial`;
+    ctx.fillText('Intro:', boxX + boxWidth * 0.1, boxY + boxHeight * 0.2);
+
+    ctx.font = `${Math.floor(canvas.height * 0.035)}px Arial`;
+    const lines = [
+        'Pedro was once a simple man.',
+        'A taco lover, a sombrero wearer,',
+        'a quiet fellow with a small chicken farm.',
+        'Everything was fine – until they came.',
+        'The crazy chickens led by',
+        'Chief Hen Gallino rebelled.',
+    ];
+
+    lines.forEach((line, i) => {
+        ctx.fillText(line, boxX + boxWidth * 0.5, boxY + boxHeight * (0.35 + i * 0.1));
+    });
 }
 
 /**
@@ -184,18 +204,22 @@ function stopGameplay() {
  * Sets the respective keyboard flags true, then resets them after 200ms.
  * @param {string} key - One of 'LEFT', 'RIGHT', 'J', 'SPACE'
  */
-function pressKey(key) {
+function pressKeyDown(key) {
     if (!keyboard) return;
     switch (key) {
         case 'LEFT': keyboard.LEFT = true; break;
         case 'RIGHT': keyboard.RIGHT = true; break;
-        case 'J': keyboard.D = true; break;
+        case 'D': keyboard.D = true; break;
         case 'SPACE': keyboard.SPACE = true; break;
     }
-    setTimeout(() => {
-        if (key === 'LEFT') keyboard.LEFT = false;
-        if (key === 'RIGHT') keyboard.RIGHT = false;
-        if (key === 'J') keyboard.D = false;
-        if (key === 'SPACE') keyboard.SPACE = false;
-    }, 200);
+}
+
+function pressKeyUp(key) {
+    if (!keyboard) return;
+    switch (key) {
+        case 'LEFT': keyboard.LEFT = false; break;
+        case 'RIGHT': keyboard.RIGHT = false; break;
+        case 'D': keyboard.D = false; break;
+        case 'SPACE': keyboard.SPACE = false; break;
+    }
 }

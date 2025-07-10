@@ -36,6 +36,19 @@ class MovableObject extends DrawableObject {
 
     }
 
+    drawHitbox(ctx) {
+    const hb = this.getHitBox();
+    ctx.save();
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(
+        hb.left,
+        hb.top,
+        hb.right - hb.left,
+        hb.bottom - hb.top
+    );
+    ctx.restore();
+}
     /**
      * Applies gravity to the object, making it fall if above ground.
      */
@@ -80,6 +93,7 @@ class MovableObject extends DrawableObject {
             top: this.y + (this.offset?.top || 0),
             bottom: this.y + this.height - (this.offset?.bottom || 0)
         };
+        
     }
 
     /**

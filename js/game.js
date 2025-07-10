@@ -33,29 +33,66 @@ function init() {
   };
 }
 
-function fullscreen() {
+function toggleFullscreenGame() {
   const fullscreenDiv = document.getElementById('fullscreenmake');
-  enterFullscreen(fullscreenDiv);
+
+  if (!document.fullscreenElement) {
+    enterFullscreen(fullscreenDiv).then(() => {
+      resizeCanvas(); 
+    });
+  } else {
+    exitFullscreen().then(() => {
+      resizeCanvas(); 
+    });
+  }
 }
 
 function enterFullscreen(element) {
-  if(element.requestFullscreen) {
-    element.requestFullscreen();
-  } else if(element.msRequestFullscreen) {      // for IE11 (remove June 15, 2022)
-    element.msRequestFullscreen();
-  } else if(element.webkitRequestFullscreen) {  // iOS Safari
-    element.webkitRequestFullscreen();
-  }
-}
+   document.getElementById('legal').style.display = 'none'
 
+  if (element.requestFullscreen) {
+    return element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    return element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    return element.msRequestFullscreen();
+  }
+  return Promise.resolve();
+
+}
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if(document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
+  if (document.exitFullscreen) {
+    return document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    return document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) {
+    return document.msExitFullscreen();
+  }
+  return Promise.resolve();
+}
+
+function resizeCanvas() {
+  const canvas = document.getElementById('canvas');
+  if (document.fullscreenElement) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+  } else {
+    canvas.width = 720;
+    canvas.height = 480;
+    canvas.style.width = '720px';
+    canvas.style.height = '480px';
+  }
+
+  if (!world) {
+    drawStartScreen();
+  } else {
+    world.draw();
   }
 }
+
 
 
 /**
@@ -177,8 +214,11 @@ function startGame() {
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   world.level.enemies.forEach(enemy => enemy.animate());
+  
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
+  document.getElementById('fullscreen').style.display = 'none';
+
   document.getElementById('pause').style.display = 'flex';
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';

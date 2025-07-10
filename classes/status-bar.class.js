@@ -37,13 +37,13 @@ class StatusBar extends DrawableObject {
      * Initializes the starting percentage value depending on the type.
      * @param {string} type 
      */
-   initializePercentageByType(type) {
-    if (type === 'coins' || type === 'sauce') {
-        this.setPercentage(0); // Bei Coins und Flaschen (Sauce) bei 0 starten
-    } else {
-        this.setPercentage(100); // Health und andere bei 100
+    initializePercentageByType(type) {
+        if (type === 'coins' || type === 'sauce') {
+            this.setPercentage(0); // Bei Coins und Flaschen (Sauce) bei 0 starten
+        } else {
+            this.setPercentage(100); // Health und andere bei 100
+        }
     }
-}
 
     /**
      * Returns the Y position based on the status bar type.
@@ -130,11 +130,11 @@ class StatusBar extends DrawableObject {
      * @returns {number} Index in the images array.
      */
     resolveImageIndex() {
-    if (this.percentage == 100) return 5;
-    if (this.percentage > 80) return 4;
-    if (this.percentage > 60) return 3;
-    if (this.percentage > 40) return 2;
-    if (this.percentage > 20) return 1;
-    return 0;
-}
+        if (this.percentage == 100) return 0;
+        if (this.percentage > 80) return 1;
+        if (this.percentage > 60) return 2;
+        if (this.percentage > 40) return 3;
+        if (this.percentage > 20) return 4;
+        return 5;
+    }
 }

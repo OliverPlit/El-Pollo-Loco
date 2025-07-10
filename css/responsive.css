@@ -3,18 +3,36 @@
         display: flex;
     }
 }
+@media only screen and (min-width: 710px) and (max-width: 1400px) and (orientation: landscape) {
+    canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+    }
 
+    .canva_main_div {
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+    }
+    a {
+        display: none;
+    }
+    h1 {
+        display: none;
+    }
+}
 
-@media only screen and (orientation: portrait) and (max-width: 760px) {
+@media only screen and (orientation: portrait) and (max-width: 1399px) {
     .canva_main_div,
-    canvas,
+    canvas,.relative,
     #icons,
     #startButton {
         display: none;
     }
 
-    body::before {
-        content: "Bitte Gerät drehen ↻";
+     body::before  {
+        content: "Bitte Gerät drehen ↻" !important;
         position: absolute;
         top: 40%;
         left: 50%;
@@ -30,7 +48,7 @@
 
 
 @media only screen and (max-height: 720px) {
-    canvas {
+    canvas, .relative {
         width: 100%;
     }
 

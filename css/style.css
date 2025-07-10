@@ -16,12 +16,16 @@ h1 {
     z-index: 3;
     position: absolute;
     top: 10px;
-    font-size: 130px;
+    font-size: 100px;
 }
 
 
+.h1_div {
+display: flex;
+justify-content: center;
+}
+
 a {
-    margin-top: 550px;
     z-index: 100;
     font-size: 40px;
 }
@@ -81,6 +85,11 @@ a {
     }
 }
 
+.relative {
+    position: relative;
+    /* für Icons Bezug */
+    display: inline-block;
+}
 
 .canva_main_div {
     display: flex;
@@ -94,11 +103,14 @@ a {
 
 
 canvas {
-    position: absolute;
+    position: relative;
     background-color: black;
     display: block;
     z-index: 1;
+    width: 100%;
+  height: 100%;
     font-family: 'zabras';
+    
 }
 
 
@@ -138,17 +150,18 @@ button:hover {
 
 
 .icons_start {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    position: absolute;
-    top: 270px;
-    padding-left: 300px;
-    z-index: 2;
-    img {
-        height: 35px;
-        width: 35px;
-    }
+  position: absolute;
+  top: 30px; 
+  right: 30px; 
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.icons_start img {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
 }
 
 
