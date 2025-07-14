@@ -32,87 +32,69 @@ function init() {
 
   };
 }
+/**
+ * Event listener for fullscreen change.
+ * Updates the world's fullscreen state when fullscreen mode changes.
+ */
+window.addEventListener("fullscreenchange", () => {
+  if (world) {
+    world.isFullscreen = !!document.fullscreenElement;
+  }
+});
 
+/**
+ * Toggles fullscreen mode for the game container.
+ * If not fullscreen, enters fullscreen on the element with id 'relative'.
+ * Otherwise exits fullscreen.
+ * Also hides or shows the legal notice accordingly.
+ */
 function toggleFullscreenGame() {
-  const fullscreenDiv = document.getElementById('fullscreenmake');
+  const fullscreenDiv = document.getElementById('relative');
 
   if (!document.fullscreenElement) {
-    enterFullscreen(fullscreenDiv).then(() => {
-      resizeCanvas(); 
-    });
+    enterFullscreen(fullscreenDiv);
+    document.getElementById('legal').style.display = 'none';
   } else {
-    exitFullscreen().then(() => {
-      resizeCanvas(); 
-    });
+    exitFullscreen();
+    document.getElementById('legal').style.display = 'block';
   }
 }
 
+/**
+ * Requests fullscreen mode for a given element.
+ * Sets the world's fullscreen flag to true after entering fullscreen.
+ * @param {HTMLElement} element - The element to make fullscreen.
+ */
 function enterFullscreen(element) {
-   document.getElementById('legal').style.display = 'none'
-
   if (element.requestFullscreen) {
-    return element.requestFullscreen();
-  } else if (element.webkitRequestFullscreen) {
-    return element.webkitRequestFullscreen();
+    element.requestFullscreen().then(() => {
+      if (world) world.isFullscreen = true;
+    });
   } else if (element.msRequestFullscreen) {
-    return element.msRequestFullscreen();
+    element.msRequestFullscreen();
+    if (world) world.isFullscreen = true;
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+    if (world) world.isFullscreen = true;
   }
-  return Promise.resolve();
-
 }
 
+/**
+ * Exits fullscreen mode if currently active.
+ */
 function exitFullscreen() {
-  if (document.exitFullscreen) {
-    return document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    return document.webkitExitFullscreen();
-  } else if (document.msExitFullscreen) {
-    return document.msExitFullscreen();
-  }
-  return Promise.resolve();
-}
-
-function resizeCanvas() {
-  const canvas = document.getElementById('canvas');
-  if (document.fullscreenElement) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-  } else {
-    canvas.width = 720;
-    canvas.height = 480;
-    canvas.style.width = '720px';
-    canvas.style.height = '480px';
-  }
-
-  if (!world) {
-    drawStartScreen();
-  } else {
-    world.draw();
+  if(document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if(document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
   }
 }
 
-
-
 /**
- * Loads and displays the start screen, and shows related UI elements.
- */
-function loadStartScreen() {
-  drawStartScreen();
-  document.getElementById('fullscreen').style.display = 'flex';
-  document.getElementById('audio').style.display = 'flex';
-  document.getElementById('legend').style.display = 'flex';
-  document.getElementById('statement').style.display = 'flex';
-}
-
-/**
- * Draws the start screen on the canvas.
- * Also overlays explanation or intro if the corresponding flags are set.
- */
-/**
- * Handles canvas clicks for the "Start Game" button.
- * @param {MouseEvent} event 
+ * Handles click events on the canvas for the "Start Game" button.
+ * Calculates click position relative to the canvas scale and
+ * starts the game if click is inside the start button area and game is not running.
+ * @param {MouseEvent} event - Mouse click event on the canvas.
  */
 function handleCanvasClick(event) {
   const rect = canvas.getBoundingClientRect();
@@ -129,7 +111,8 @@ function handleCanvasClick(event) {
 }
 
 /**
- * Loads and displays the start screen, and shows related UI elements.
+ * Loads and displays the start screen.
+ * Shows relevant UI elements like fullscreen toggle, audio, legend, and statement icons.
  */
 function loadStartScreen() {
   drawStartScreen();
@@ -140,8 +123,8 @@ function loadStartScreen() {
 }
 
 /**
- * Draws the start screen on the canvas.
- * Also overlays explanation or intro if the corresponding flags are set.
+ * Draws the start screen image and UI elements on the canvas.
+ * Also overlays explanation or intro if those flags are set.
  */
 function drawStartScreen() {
   if (!startImage) return;
@@ -157,6 +140,11 @@ function drawStartScreen() {
   }
 }
 
+/**
+ * Draws a rounded rectangular "Start" button on the canvas at fixed coordinates.
+ * Uses shadow, fill, and stroke styles for visual effect.
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D rendering context.
+ */
 function drawStartButton(ctx) {
   const x = 60;
   const y = 30;
@@ -178,6 +166,7 @@ function drawStartButton(ctx) {
   ctx.strokeStyle = 'white';
   ctx.stroke();
   ctx.restore();
+
   ctx.fillStyle = 'white';
   ctx.font = '30px "zabras", Arial';
   ctx.textAlign = 'center';
@@ -185,8 +174,15 @@ function drawStartButton(ctx) {
   ctx.fillText('Start', x + width / 2, y + height / 2);
 }
 
-
-
+/**
+ * Draws a rounded rectangle path on the canvas.
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D rendering context.
+ * @param {number} x - X coordinate of the rectangle's top-left corner.
+ * @param {number} y - Y coordinate of the rectangle's top-left corner.
+ * @param {number} width - Width of the rectangle.
+ * @param {number} height - Height of the rectangle.
+ * @param {number} radius - Radius of the rounded corners.
+ */
 function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -200,6 +196,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
 }
+
 /**
  * Starts the game by creating the world and level,
  * starting enemy animations,
@@ -217,13 +214,12 @@ function startGame() {
   
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
-  document.getElementById('fullscreen').style.display = 'none';
+  document.getElementById('fullscreen').style.display = 'flex';
 
   document.getElementById('pause').style.display = 'flex';
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').classList.add('visible');
-
   startSound();
 }
 
@@ -249,6 +245,8 @@ function backToStart() {
   document.getElementById('back').style.display = 'none';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').style.display = 'none';
+    document.getElementById('mobileControls').classList.remove('visible');
+
 }
 
 /**

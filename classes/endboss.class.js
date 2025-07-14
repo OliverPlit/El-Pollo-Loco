@@ -5,20 +5,15 @@
 class Endboss extends MovableObject {
     /** @type {number} Horizontal position */
     x = 3200;
-    /** @type {number} Height of the boss */
     height = 400;
-    /** @type {number} Width of the boss */
     width = 250;
-    /** @type {number} Vertical position */
     y = 60;
-    /** @type {number} Remaining energy/health */
     energy = 100;
-    /** @type {boolean} Whether the boss is dead */
-    isDead = false;
     /** @type {Audio} Sound played when alert triggered */
     alertSound = new Audio('./audio/482009__ricratio__rooster-2018-12-25.wav');
     /** @type {boolean} Whether alert has been shown */
     alertShown = false;
+    isDead = false;
     /** @type {string} Current state ('normal', 'alert', 'attack', 'walking') */
     state = 'normal';
 

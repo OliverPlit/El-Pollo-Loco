@@ -21,9 +21,10 @@ h1 {
 
 
 .h1_div {
-display: flex;
-justify-content: center;
+    display: flex;
+    justify-content: center;
 }
+
 
 a {
     z-index: 100;
@@ -33,6 +34,12 @@ a {
 
 .fullscreen {
     position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+.fullscreenmake {
     width: 100vw;
     height: 100vh;
 }
@@ -85,11 +92,12 @@ a {
     }
 }
 
+
 .relative {
     position: relative;
-    /* für Icons Bezug */
     display: inline-block;
 }
+
 
 .canva_main_div {
     display: flex;
@@ -97,6 +105,7 @@ a {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    width: 100vw;
     position: relative;
     z-index: 2;
 }
@@ -106,11 +115,10 @@ canvas {
     position: relative;
     background-color: black;
     display: block;
-    z-index: 1;
     width: 100%;
-  height: 100%;
+    height: 100%;
+    z-index: 1;
     font-family: 'zabras';
-    
 }
 
 
@@ -150,18 +158,19 @@ button:hover {
 
 
 .icons_start {
-  position: absolute;
-  top: 30px; 
-  right: 30px; 
-  display: flex;
-  gap: 15px;
-  z-index: 10;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+    z-index: 10;
 }
 
+
 .icons_start img {
-  width: 35px;
-  height: 35px;
-  cursor: pointer;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
 }
 
 

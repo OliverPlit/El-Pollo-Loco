@@ -1,46 +1,81 @@
+/**
+ * Represents the game world including the character, enemies, objects, canvas and game logic.
+ */
 class World {
+    /** @type {Character} */
     character = new Character();
+    /** @type {HTMLCanvasElement} */
     canvas;
+    /** @type {CanvasRenderingContext2D} */
     ctx;
     keyboard;
     camera_x = 0;
+
+    /** @type {StatusBar} */
     statusBarHealth = new StatusBar('health');
     statusBarBottles = new StatusBar('sauce');
     statusBarCoins = new StatusBar('coins');
+
+    /** @type {Endboss} */
     endboss = new Endboss();
+    /** @type {ThrowableObject[]} */
     throwableObjects = [];
+    /** @type {Coins[]} */
     coins = [];
+    /** @type {Bottle[]} */
     bottles = [];
+
+    /** @type {boolean} */
+    hasPlayedLoseSound = false;
+    windowBackShown = false;
+    isFullscreen = false;
     paused = false;
     active = true;
     gameOver = false;
     gameWin = false;
+
+    /** @type {number} */
     lastBottleThrowTime = 0;
+
+    /** @type {HTMLAudioElement} */
     loseSound = new Audio('./audio/350987__cabled_mess__lose_c_05.wav');
     winSound = new Audio('./audio/270545__littlerobotsoundfactory__jingle_win_01.wav');
     coinSound = new Audio('./audio/402767__lilmati__retro-coin-03.wav');
     collectBottle = new Audio('./audio/711129__xiko__retro-collection-3.wav');
+
+    /** @type {number} */
     requestAnimationFrameID;
     frameSkipCounter = 0;
     frameSkipRate = 2;
-    hasPlayedLoseSound = false;
-    windowBackShown = false;
 
 
+
+    /**
+     * Creates an instance of the World.
+     * @param {HTMLCanvasElement} canvas - The canvas element.
+     * @param {Keyboard} keyboard - The keyboard input tracker.
+     * @param {Level} level - The current level object.
+     */
     constructor(canvas, keyboard, level) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.level = level;
+
         this.setWorld();
         this.generateCoins();
         this.generateBottles();
         this.assignWorldToEnemies();
+        addCollisionFunctionsToWorld(this);
         this.run();
         this.muteSounds();
         this.draw();
+
+        this.canvasWidth = canvas.width;
+        this.canvasHeight = canvas.height;
     }
 
+    /** Registers all game sounds with the global sound manager. */
     muteSounds() {
         window.soundManager.addSound(this.coinSound);
         window.soundManager.addSound(this.collectBottle);
@@ -48,15 +83,18 @@ class World {
         window.soundManager.addSound(this.loseSound);
     }
 
+    /** Assigns the world reference to all enemies. */
     assignWorldToEnemies() {
         this.level.enemies.forEach(enemy => enemy.world = this);
     }
 
+    /** Assigns the world to the character and starts character animation. */
     setWorld() {
         this.character.world = this;
         this.character.animate();
     }
 
+    /** Randomly generates coin positions in the level without overlapping. */
     generateCoins() {
         const minDistance = 80;
         while (this.coins.length < 30) {
@@ -69,6 +107,7 @@ class World {
         }
     }
 
+    /** Randomly generates bottle positions in the level without overlapping. */
     generateBottles() {
         const minDistance = 200;
         while (this.bottles.length < 5) {
@@ -81,6 +120,7 @@ class World {
         }
     }
 
+    /** Starts checking for collisions and throw inputs repeatedly. */
     run() {
         this.checkCollisionsInterval = setInterval(() => {
             this.checkCollisions();
@@ -88,6 +128,7 @@ class World {
         }, 100);
     }
 
+    /** Handles logic to throw bottles with cooldown. */
     checkThrowObjects() {
         const now = Date.now();
         const cooldown = 1000;
@@ -99,13 +140,12 @@ class World {
             this.statusBarBottles.setPercentage((this.character.bottles / 20) * 100);
             this.lastBottleThrowTime = now;
             this.character.lastActionTime = now;
-
         }
     }
 
+    /** Main game draw loop using requestAnimationFrame. */
     draw() {
         this.requestAnimationFrameID = requestAnimationFrame(() => this.draw());
-
         if (this.paused || !this.active) return;
         if (this.frameSkipCounter++ % this.frameSkipRate !== 0) return;
 
@@ -118,6 +158,14 @@ class World {
         this.endboss.animate();
         this.addObjectsToMap(this.level.backgroundObjects);
         this.ctx.translate(-this.camera_x, 0);
+        this.addtoMapElements();
+        this.ctx.translate(-this.camera_x, 0);
+
+        if (this.showIntro) this.drawExplanationOverlay();
+    }
+
+    /** Draws all overlay and character elements. */
+    addtoMapElements() {
         this.addtoMap(this.statusBarHealth);
         this.addtoMap(this.statusBarBottles);
         this.addtoMap(this.statusBarCoins);
@@ -129,11 +177,9 @@ class World {
         this.addObjectsToMap(this.throwableObjects);
         this.addObjectsToMap(this.coins);
         this.addObjectsToMap(this.bottles);
-        this.ctx.translate(-this.camera_x, 0);
-
-        if (this.showIntro) this.drawExplanationOverlay();
     }
 
+    /** Handles end of game logic when player wins. */
     closeGameBecauseWin() {
         const windowBack = document.getElementById('window_back');
         const backgroundSound = document.getElementById('startSound');
@@ -146,6 +192,7 @@ class World {
         setTimeout(() => windowBack.style.display = 'flex', 1000);
     }
 
+    /** Handles end of game logic when player loses. */
     closeGameBecauseLose() {
         const windowBack = document.getElementById('window_back');
         const backgroundSound = document.getElementById('startSound');
@@ -167,128 +214,52 @@ class World {
         }
     }
 
+    /**
+     * Adds multiple objects to the canvas.
+     * @param {MovableObject[]} objects 
+     */
     addObjectsToMap(objects) {
         objects.forEach(o => this.addtoMap(o));
     }
 
+    /**
+     * Draws a single object on the canvas, flipping if necessary.
+     * @param {MovableObject} mo 
+     */
     addtoMap(mo) {
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 
+    /** Stops the draw loop and pauses all animations. */
     stopGameLoop() {
         if (this.checkCollisionsInterval) {
             clearInterval(this.checkCollisionsInterval);
             this.checkCollisionsInterval = null;
         }
-
         if (this.requestAnimationFrameID) {
             cancelAnimationFrame(this.requestAnimationFrameID);
             this.requestAnimationFrameID = null;
         }
-
-
         MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = true);
-
         this.active = false;
         this.paused = true;
     }
 
+    /** Resumes the draw loop and all animations. */
     resumeGameLoop() {
         if (!this.checkCollisionsInterval) this.run();
-
         if (!this.requestAnimationFrameID) this.draw();
-
-
-
         MovableObject.allMovables.forEach(obj => obj.isAnimatedPaused = false);
-
         this.paused = false;
         this.active = true;
     }
 
-    checkCollisions() {
-        this.checkEnemyCollisions();
-        this.checkThrowableObjectCollisions();
-        this.checkCoinCollisions();
-        this.checkBottleCollisions();
-    }
-
-    checkEnemyCollisions() {
-        this.level.enemies.forEach(enemy => {
-            if (this.character.isColliding(enemy)) {
-                const cBox = this.character.getHitBox();
-                const eBox = enemy.getHitBox();
-                const isJumpingOnEnemy = this.character.speedY < 0 && cBox.bottom <= eBox.top + (enemy.height / 2);
-
-                if (isJumpingOnEnemy) {
-                    enemy.energy = 0;
-                    this.character.speedY = 30;
-                    this.character.y = 155;
-                } else if (enemy.energy > 0) {
-                    const now = Date.now();
-                    const timePassed = (now - this.character.lastHit) / 1000;
-                    if (timePassed > 2 || this.character.lastHit === 0) {
-                        if (enemy instanceof Endboss) {
-                            this.character.energy -= 30;
-                            console.log(this.character.energy);
-
-                        } else {
-                            this.character.hit();
-                            
-                        }
-                        if (this.character.energy < 0) {
-                                this.character.energy = 0;
-                            }
-                        this.statusBarHealth.setPercentage(this.character.energy);
-                    }
-                }
-            }
-        });
-    }
-
-    checkThrowableObjectCollisions() {
-        this.level.enemies.forEach(enemy => {
-            this.throwableObjects.forEach((throwableObject) => {
-                if (enemy.isColliding(throwableObject)) {
-                    if (enemy instanceof Endboss) {
-                        enemy.hitByBottle();
-                    } else {
-                        enemy.energy = 0;
-                    }
-                    throwableObject.crash();
-                }
-            });
-        });
-    }
-
-    checkCoinCollisions() {
-        this.coins = this.coins.filter((coin) => {
-            if (this.character.isColliding(coin)) {
-                this.character.coins += 1;
-                this.coinSound.play();
-                const percentage = Math.min(this.character.coins * 3, 100);
-                this.statusBarCoins.setPercentage(percentage);
-                return false;
-            }
-            return true;
-        });
-    }
-
-    checkBottleCollisions() {
-        this.bottles = this.bottles.filter((bottle) => {
-            if (this.character.isColliding(bottle)) {
-                this.character.bottles += 5;
-                this.collectBottle.play();
-                const percentage = Math.min(this.character.bottles * 5, 100);
-                this.statusBarBottles.setPercentage(percentage);
-                return false;
-            }
-            return true;
-        });
-    }
-
+    /**
+     * Flips the canvas context horizontally.
+     * @param {MovableObject} mo 
+     */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
@@ -296,6 +267,10 @@ class World {
         mo.x *= -1;
     }
 
+    /**
+     * Restores the flipped canvas context.
+     * @param {MovableObject} mo 
+     */
     flipImageBack(mo) {
         mo.x *= -1;
         this.ctx.restore();

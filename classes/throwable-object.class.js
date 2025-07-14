@@ -56,7 +56,7 @@ class ThrowableObject extends MovableObject {
         this.speedY = 20;
         this.applyGravity();
         this.flightInterval = setInterval(() => {
-this.x += this.otherDirection ? -15 : 15;
+            this.x += this.otherDirection ? -15 : 15;
             this.playAnimation(this.IMAGE_BOTTLE_ROTATE);
             if (this.y > 350) {
                 this.crash();

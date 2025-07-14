@@ -1,6 +1,3 @@
-
-
-
 #mobileControls button {
     width: 45px;
     height: 45px;
@@ -19,9 +16,9 @@
 }
 
 
-@media only screen and (max-width: 1400px) and (orientation: landscape) {
+@media only screen and (orientation: landscape) and (max-width: 899px) {
     #mobileControls.visible {
-    display: flex;
+    display: flex !important;
         position: fixed;
         bottom: 20px;
         left: 50%;

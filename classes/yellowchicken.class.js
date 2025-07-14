@@ -57,15 +57,26 @@ class YellowChicken extends MovableObject {
         this.jumpLoop();
         this.muteSounds();
     }
-    stopAllAnimations() {
-    this.isAnimationPaused = true;
-    clearInterval(this.moveInterval);
-    clearInterval(this.walkInterval);
-    clearInterval(this.deathCheckInterval);
-    clearInterval(this.jumpInterval);
-}
 
-   
+    /**
+   * Stops all ongoing animations and interval-based checks related to the object's behavior.
+   *
+   * - Pauses animations by setting `isAnimationPaused` to true.
+   * - Clears the following intervals if they are active:
+   *   - `moveInterval`: for movement updates (e.g. walking or flying)
+   *   - `walkInterval`: for frame-based walking animation
+   *   - `deathCheckInterval`: for checking if the object has died
+   *   - `jumpInterval`: for jump-related movement (if applicable)
+   */
+    stopAllAnimations() {
+        this.isAnimationPaused = true;
+        clearInterval(this.moveInterval);
+        clearInterval(this.walkInterval);
+        clearInterval(this.deathCheckInterval);
+        clearInterval(this.jumpInterval);
+    }
+
+
     /**
      * Registers the death sound with the global sound manager.
      */
@@ -74,7 +85,7 @@ class YellowChicken extends MovableObject {
     }
 
 
-  
+
     /**
      * Checks if the chicken is above ground (can jump).
      * @returns {boolean} True if chicken is in the air.
