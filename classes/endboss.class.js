@@ -7,8 +7,8 @@ class Endboss extends MovableObject {
     x = 3200;
     height = 400;
     width = 250;
-    y = 60;
-    energy = 100;
+    y = 180;
+    energy = 60;
     /** @type {Audio} Sound played when alert triggered */
     alertSound = new Audio('./audio/482009__ricratio__rooster-2018-12-25.wav');
     /** @type {boolean} Whether alert has been shown */
@@ -58,25 +58,36 @@ class Endboss extends MovableObject {
      * Constructs the Endboss, loads images, sets initial position, speed, and starts animation.
      * @param {object} world - Reference to the game world.
      */
-    constructor(world) {
-        super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
-        this.statusBar = new StatusBar('endboss');
-        this.speed = 7;
-        this.world = world;
-        this.loadImages(this.IMAGES_WALKING);
-        this.loadImages(this.IMAGES_ALERT);
-        this.loadImages(this.IMAGES_ATTACK);
-        this.animate();
-        this.updateStatusBarPosition();
-        this.animateCurrentState();
-        window.soundManager.addSound(this.alertSound);
-        this.offset = {
-            top: 0,
-            bottom: 30,
-            left: 45,
-            right: 0
-        };
-    }
+   constructor(world) {
+    super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
+    this.statusBar = new StatusBar('endboss');
+    this.speed = 12;
+    this.height = 300;
+    this.width = 250;
+    this.x = 3200;
+    
+    const groundLevel = 220;
+    this.y = groundLevel - this.height; // y = 220 - 400 = -180 → korrekt gesetzt!
+    
+    this.world = world;
+    this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_ALERT);
+    this.loadImages(this.IMAGES_ATTACK);
+    
+    this.updateStatusBarPosition();
+    this.applyGravity(); // erst nach korrekt gesetztem y
+    this.animate();
+    this.animateCurrentState();
+    
+    window.soundManager.addSound(this.alertSound);
+    
+    this.offset = {
+        top: 0,
+        bottom: 30,
+        left: 45,
+        right: 0
+    };
+}
 
     /**
      * Starts movement and walking animation intervals.
@@ -213,10 +224,29 @@ class Endboss extends MovableObject {
             this.stateStartTime = Date.now();
             if (this.alertSound.paused) this.alertSound.play();
         }
+
         if (this.state === 'walking') {
             this.moveLeft();
+            // Spieler in Reichweite? Dann spring!
+            if (this.isNearPlayer()) {
+                this.jumpFlat();
+            }
         }
     }
+
+
+    isNearPlayer() {
+        return (
+            this.world?.character &&
+            Math.abs(this.x - this.world.character.x) < 130  // horizontal nahe
+        );
+    }
+
+    jumpFlat() {
+        if (this.isAboveGround()) return; // spring nur wenn am Boden
+        this.speedY = 20; // kleiner Sprung (z. B. -8 statt -30)
+    }
+
 
     /**
      * Updates the current animation frame for the active state.

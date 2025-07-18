@@ -18,10 +18,12 @@
         align-items: center;
     }
 
-    a {
+   .legal-notice {
         display: none !important;
     }
-
+.legal_notice_mobile {
+    display: flex;
+}
      h1{
         display: none !important;
     }
@@ -56,6 +58,9 @@
 
     .h1_div {
         display: none;
+    }
+    .legal_notice_mobile {
+        display: block !important;
     }
 }
 

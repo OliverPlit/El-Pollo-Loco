@@ -3,8 +3,8 @@
  */
 class Character extends MovableObject {
     height = 280;
-    y = 155;
-    x = 20;
+    y = 0;
+    x = 0;
     speed = 10;
     coins = 0;
     bottles = 0;
@@ -15,7 +15,7 @@ class Character extends MovableObject {
     animationInProgress = false;
 
     world;
-    offset = { top: 101, bottom: 10, left: 10, right: 15 };
+    offset = { top: 101, bottom: 10, left: 10, right: 30 };
 
     IMAGES_IDLE = [
         './assets/img/2_character_pepe/1_idle/idle/I-1.png',

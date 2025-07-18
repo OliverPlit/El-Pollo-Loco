@@ -19,11 +19,13 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.checkEnemyCollisions = function () {
         this.level.enemies.forEach(enemy => {
+            if (enemy.energy <= 0) return;
+
             if (!this.character.isColliding(enemy)) return;
 
             if (this.isJumpingOnEnemy(enemy)) {
                 this.killEnemy(enemy);
-            } else if (enemy.energy > 0 && this.canBeHit()) {
+            } else if (this.canBeHit()) {
                 this.handleCharacterHit(enemy);
             }
         });
@@ -48,8 +50,7 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.killEnemy = function (enemy) {
         enemy.energy = 0;
-        this.character.speedY = 30;
-        this.character.y = 155;
+        this.character.speedY = 20;
     };
 
     /**
@@ -69,7 +70,7 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.handleCharacterHit = function (enemy) {
         if (enemy instanceof Endboss) {
-            this.character.energy -= 30;
+            this.character.energy -= 20;
         } else {
             this.character.hit();
         }
@@ -110,6 +111,8 @@ function addCollisionFunctionsToWorld(world) {
                 this.character.coins += 1;
                 this.coinSound.play();
                 const percentage = Math.min(this.character.coins * 3, 100);
+                console.log(this.coins);
+                
                 this.statusBarCoins.setPercentage(percentage);
                 return false;
             }
@@ -122,15 +125,16 @@ function addCollisionFunctionsToWorld(world) {
      * Increases bottle count, plays sound, updates bottle bar, and removes collected bottles.
      */
     world.checkBottleCollisions = function () {
-        this.bottles = this.bottles.filter((bottle) => {
-            if (this.character.isColliding(bottle)) {
-                this.character.bottles += 5;
-                this.collectBottle.play();
-                const percentage = Math.min(this.character.bottles * 5, 100);
-                this.statusBarBottles.setPercentage(percentage);
-                return false;
-            }
-            return true;
-        });
-    };
+    this.bottles = this.bottles.filter((bottle) => {
+        if (this.character.isColliding(bottle)) {
+            this.character.bottles += 5;
+            this.character.bottles = Math.min(this.character.bottles, 25);
+            this.collectBottle.play();
+            const percentage = (this.character.bottles / 25) * 100;
+            this.statusBarBottles.setPercentage(percentage);
+            return false;
+        }
+        return true;
+    });
+};
 }

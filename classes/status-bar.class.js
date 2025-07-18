@@ -5,7 +5,7 @@
 class StatusBar extends DrawableObject {
     /** @type {number} Current percentage value of the status bar */
     percentage = 100;
-
+    x = 200;
     /** @type {string[]} Images used for the endboss status bar */
     IMAGES_STATUSBAR_ENDBOSS = [
         'assets/img/7_statusbars/2_statusbar_endboss/blue/blue0.png',
@@ -33,15 +33,23 @@ class StatusBar extends DrawableObject {
         this.initializePercentageByType(type);
     }
 
+
+   setBottles(bottleCount) {
+    bottleCount = Math.max(0, Math.min(25, bottleCount)); // Begrenzung 0–25
+    const percentage = (bottleCount / 25) * 100;
+    this.setPercentage(percentage);
+}
+
+
     /**
      * Initializes the starting percentage value depending on the type.
      * @param {string} type 
      */
     initializePercentageByType(type) {
         if (type === 'coins' || type === 'sauce') {
-            this.setPercentage(0); // Bei Coins und Flaschen (Sauce) bei 0 starten
+            this.setPercentage(0);
         } else {
-            this.setPercentage(100); // Health und andere bei 100
+            this.setPercentage(100);
         }
     }
 
@@ -130,11 +138,11 @@ class StatusBar extends DrawableObject {
      * @returns {number} Index in the images array.
      */
     resolveImageIndex() {
-        if (this.percentage == 100) return 0;
-        if (this.percentage > 80) return 1;
-        if (this.percentage > 60) return 2;
-        if (this.percentage > 40) return 3;
-        if (this.percentage > 20) return 4;
+        if (this.percentage >= 100) return 0;
+        if (this.percentage >= 70) return 1;
+        if (this.percentage >= 60) return 2;
+        if (this.percentage >= 40) return 3;
+        if (this.percentage >= 20) return 4;
         return 5;
     }
 }

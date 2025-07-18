@@ -38,6 +38,14 @@ const walkingSound = new Audio('./audio/537180__colorscrimsontears__walking-on-s
  */
 const jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
 
+
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+  });
+}
+
+
 /**
  * Toggles fullscreen mode for the game canvas.
  * Uses vendor prefixes for compatibility.
@@ -52,6 +60,10 @@ function toggleFullscreen() {
         document.exitFullscreen?.();
     }
 }
+
+
+
+
 
 /**
  * Toggles the display of the explanation overlay on the start screen.
@@ -223,3 +235,55 @@ function pressKeyUp(key) {
         case 'SPACE': keyboard.SPACE = false; break;
     }
 }
+
+/**
+ * Keyboard event listener for keydown events.
+ * Updates keyboard state flags to true based on pressed keys.
+ * @param {KeyboardEvent} event 
+ */
+window.addEventListener('keydown', (event) => {
+  if (event.keyCode == 39) {
+    keyboard.RIGHT = true;
+  }
+  if (event.keyCode == 37) {
+    keyboard.LEFT = true;
+  }
+  if (event.keyCode == 38) {
+    keyboard.UP = true;
+  }
+  if (event.keyCode == 40) {
+    keyboard.DOWN = true;
+  }
+  if (event.keyCode == 32) {
+    keyboard.SPACE = true;
+  }
+  if (event.keyCode == 68) {
+    keyboard.D = true;
+  }
+});
+
+/**
+ * Keyboard event listener for keyup events.
+ * Updates keyboard state flags to false based on released keys.
+ * @param {KeyboardEvent} event 
+ */
+window.addEventListener('keyup', (event) => {
+  if (event.keyCode == 39) {
+    keyboard.RIGHT = false;
+  }
+  if (event.keyCode == 37) {
+    keyboard.LEFT = false;
+  }
+  if (event.keyCode == 38) {
+    keyboard.UP = false;
+  }
+  if (event.keyCode == 40) {
+    keyboard.DOWN = false;
+  }
+  if (event.keyCode == 32) {
+    keyboard.SPACE = false;
+  }
+  if (event.keyCode == 68) {
+    keyboard.D = false;
+  }
+});

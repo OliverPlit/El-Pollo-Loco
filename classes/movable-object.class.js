@@ -32,23 +32,10 @@ class MovableObject extends DrawableObject {
     constructor() {
         super();
         window.soundManager.addSound(this.hurtSound);
-                MovableObject.allMovables.push(this); // automatisch registrieren
+        MovableObject.allMovables.push(this);
 
     }
 
-    drawHitbox(ctx) {
-    const hb = this.getHitBox();
-    ctx.save();
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(
-        hb.left,
-        hb.top,
-        hb.right - hb.left,
-        hb.bottom - hb.top
-    );
-    ctx.restore();
-}
     /**
      * Applies gravity to the object, making it fall if above ground.
      */
@@ -66,7 +53,7 @@ class MovableObject extends DrawableObject {
      */
     jump() {
         if (!this.isAnimatedPaused) {
-        this.speedY = 25;
+            this.speedY = 25;
 
         }
     }
@@ -93,7 +80,7 @@ class MovableObject extends DrawableObject {
             top: this.y + (this.offset?.top || 0),
             bottom: this.y + this.height - (this.offset?.bottom || 0)
         };
-        
+
     }
 
     /**
@@ -115,11 +102,11 @@ class MovableObject extends DrawableObject {
     /**
      * Applies damage to the object, reducing energy and updating last hit time.
      */
-  hit() {
-    this.energy -= 10;
-    if (this.energy < 0) this.energy = 0;
-    this.lastHit = new Date().getTime();
-}
+    hit() {
+        this.energy -= 10;
+        if (this.energy < 0) this.energy = 0;
+        this.lastHit = new Date().getTime();
+    }
 
     /**
      * Checks if the object is currently in a hurt state (within 2 seconds after hit).
@@ -151,7 +138,7 @@ class MovableObject extends DrawableObject {
      */
     moveLeft() {
         if (!this.isAnimatedPaused) {
-                    this.x -= this.speed;
+            this.x -= this.speed;
 
         }
     }
@@ -173,21 +160,21 @@ class MovableObject extends DrawableObject {
  * @param {string[]} images - Array of image paths
  * @param {Function} callback - Called when animation is finished
  */
-playAnimationOnce(images, callback) {
-    if (this.animationInProgress) return;
+    playAnimationOnce(images, callback) {
+        if (this.animationInProgress) return;
 
-    this.animationInProgress = true;
-    let i = 0;
-    this.animationInterval = setInterval(() => {
-        if (i >= images.length) {
-            clearInterval(this.animationInterval);
-            this.animationInProgress = false;
-            if (callback) callback();
-        } else {
-            this.img = this.imageCache[images[i]];
-            i++;
-        }
-    }, 100); // 100ms pro Frame, anpassen nach Geschmack
-}
+        this.animationInProgress = true;
+        let i = 0;
+        this.animationInterval = setInterval(() => {
+            if (i >= images.length) {
+                clearInterval(this.animationInterval);
+                this.animationInProgress = false;
+                if (callback) callback();
+            } else {
+                this.img = this.imageCache[images[i]];
+                i++;
+            }
+        }, 65); // 100ms pro Frame, anpassen nach Geschmack
+    }
 
 }

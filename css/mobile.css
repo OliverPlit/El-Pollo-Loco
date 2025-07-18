@@ -16,7 +16,7 @@
 }
 
 
-@media only screen and (orientation: landscape) and (max-width: 899px) {
+@media only screen and (orientation: landscape) and (max-width: 1399px) {
     #mobileControls.visible {
     display: flex !important;
         position: fixed;
@@ -27,9 +27,11 @@
         gap: 10px;
         justify-content: center;
     }
-    a {
+
+    .legal-notice{
         display: none;
     }
+    
     h1 {
         display: none;
     }

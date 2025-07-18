@@ -99,7 +99,7 @@ class World {
         const minDistance = 80;
         while (this.coins.length < 30) {
             let coin = new Coins();
-            coin.x = 100 + Math.random() * 2500;
+            coin.x = 100 + Math.random() * 2800;
             coin.y = 100 + Math.random() * 280;
             if (!this.coins.some(c => Math.hypot(c.x - coin.x, c.y - coin.y) < minDistance)) {
                 this.coins.push(coin);
@@ -112,7 +112,7 @@ class World {
         const minDistance = 200;
         while (this.bottles.length < 5) {
             let bottle = new Bottle();
-            bottle.x = 100 + Math.random() * 2500;
+            bottle.x = 300 + Math.random() * 2500;
             bottle.y = 370;
             if (!this.bottles.some(c => Math.hypot(c.x - bottle.x, c.y - bottle.y) < minDistance)) {
                 this.bottles.push(bottle);
@@ -166,12 +166,12 @@ class World {
 
     /** Draws all overlay and character elements. */
     addtoMapElements() {
+        this.addObjectsToMap(this.level.clouds);
         this.addtoMap(this.statusBarHealth);
         this.addtoMap(this.statusBarBottles);
         this.addtoMap(this.statusBarCoins);
         this.addtoMap(this.endboss.statusBar);
         this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
         this.addtoMap(this.character);
         this.addObjectsToMap(this.throwableObjects);

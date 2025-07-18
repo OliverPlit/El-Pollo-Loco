@@ -125,7 +125,6 @@ ul li {
 
 @media (max-width: 490px) {
     .second_container {
-        width: 200px;
         padding: 10px 15px;
     }
 

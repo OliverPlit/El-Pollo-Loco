@@ -19,6 +19,8 @@ class Cloud extends MovableObject {
      * Moves the cloud to the left to simulate wind.
      */
     animate() {
-        this.moveLeft();
+        setInterval(() => {
+            this.x -= 0.15
+        },1000/ 60)
     }
 }
