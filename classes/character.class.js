@@ -3,7 +3,7 @@
  */
 class Character extends MovableObject {
     height = 280;
-    y = 0;
+    y = 90; 
     x = 0;
     speed = 10;
     coins = 0;

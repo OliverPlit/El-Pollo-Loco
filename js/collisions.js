@@ -50,7 +50,9 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.killEnemy = function (enemy) {
         enemy.energy = 0;
-        this.character.speedY = 20;
+     if (this.character.speedY < 0) {
+    this.character.speedY = 20; 
+}
     };
 
     /**
@@ -74,7 +76,6 @@ function addCollisionFunctionsToWorld(world) {
         } else {
             this.character.hit();
         }
-
         if (this.character.energy < 0) {
             this.character.energy = 0;
         }
@@ -111,8 +112,6 @@ function addCollisionFunctionsToWorld(world) {
                 this.character.coins += 1;
                 this.coinSound.play();
                 const percentage = Math.min(this.character.coins * 3, 100);
-                console.log(this.coins);
-                
                 this.statusBarCoins.setPercentage(percentage);
                 return false;
             }
@@ -125,16 +124,16 @@ function addCollisionFunctionsToWorld(world) {
      * Increases bottle count, plays sound, updates bottle bar, and removes collected bottles.
      */
     world.checkBottleCollisions = function () {
-    this.bottles = this.bottles.filter((bottle) => {
-        if (this.character.isColliding(bottle)) {
-            this.character.bottles += 5;
-            this.character.bottles = Math.min(this.character.bottles, 25);
-            this.collectBottle.play();
-            const percentage = (this.character.bottles / 25) * 100;
-            this.statusBarBottles.setPercentage(percentage);
-            return false;
-        }
-        return true;
-    });
-};
+        this.bottles = this.bottles.filter((bottle) => {
+            if (this.character.isColliding(bottle)) {
+                this.character.bottles += 5;
+                this.character.bottles = Math.min(this.character.bottles, 25);
+                this.collectBottle.play();
+                const percentage = (this.character.bottles / 25) * 100;
+                this.statusBarBottles.setPercentage(percentage);
+                return false;
+            }
+            return true;
+        });
+    };
 }

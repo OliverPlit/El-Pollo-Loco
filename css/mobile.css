@@ -20,12 +20,16 @@
     #mobileControls.visible {
     display: flex !important;
         position: fixed;
-        bottom: 20px;
+        bottom: 1 0px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 9999;
-        gap: 10px;
+        gap: 120px;
         justify-content: center;
+    }
+
+    .button_mobile_space {
+        width: 90px !important;
     }
 
     .legal-notice{

@@ -39,11 +39,25 @@ const walkingSound = new Audio('./audio/537180__colorscrimsontears__walking-on-s
 const jumpSound = new Audio('./audio/172660__qubodup__boing-jump-cc-by-cfork-boing_rawaif-7967.flac');
 
 
-if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-  document.addEventListener('contextmenu', function (e) {
+function preventContextMenu(e) {
     e.preventDefault();
-  });
 }
+
+let contextMenuDisabled = false;
+
+function updateContextMenuState() {
+    if (window.innerWidth <= 1390 && !contextMenuDisabled) {
+        document.addEventListener('contextmenu', preventContextMenu);
+        contextMenuDisabled = true;
+    } else if (window.innerWidth > 1390 && contextMenuDisabled) {
+        document.removeEventListener('contextmenu', preventContextMenu);
+        contextMenuDisabled = false;
+    }
+}
+
+//updateContextMenuState();
+
+window.addEventListener('resize', updateContextMenuState);
 
 
 /**
