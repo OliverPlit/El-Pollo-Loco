@@ -5,7 +5,7 @@
 class Endboss extends MovableObject {
     /** @type {number} Horizontal position */
     x = 3200;
-    height = 400;
+    height = 280;
     width = 250;
     y = 180;
     energy = 60;
@@ -62,12 +62,9 @@ class Endboss extends MovableObject {
     super().loadImage('./assets/img/4_enemie_boss_chicken/2_alert/G5.png');
     this.statusBar = new StatusBar('endboss');
     this.speed = 12;
-    this.height = 300;
-    this.width = 250;
     this.x = 3200;
     
-    const groundLevel = 220;
-    this.y = groundLevel - this.height; // y = 220 - 400 = -180 → korrekt gesetzt!
+   this.y = 180;
     
     this.world = world;
     this.loadImages(this.IMAGES_WALKING);

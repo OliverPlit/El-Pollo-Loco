@@ -58,6 +58,7 @@ a {
 .legal_notice_mobile {
     display: none;
 }
+
 .window_for_back {
     display: flex;
     justify-content: center;
@@ -114,6 +115,7 @@ a {
 
 
 canvas {
+    aspect-ratio: 16 / 9;
     position: relative;
     background-color: black;
     display: block;

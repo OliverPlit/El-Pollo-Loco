@@ -17,7 +17,7 @@ class MovableObject extends DrawableObject {
 
     /** @type {number} Current energy (health) of the object */
     energy = 100;
-    static allMovables = []; // Liste aller Instanzen
+    static allMovables = [];
 
     /** @type {number} Timestamp of the last time the object was hit */
     lastHit = 0;

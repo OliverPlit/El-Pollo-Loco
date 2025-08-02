@@ -2,8 +2,8 @@
  * Main controllable character in the game.
  */
 class Character extends MovableObject {
-    height = 280;
-    y = 90; 
+    height = 260;
+    y = 180; 
     x = 0;
     speed = 10;
     coins = 0;

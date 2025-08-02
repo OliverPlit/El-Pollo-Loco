@@ -57,7 +57,7 @@ function updateContextMenuState() {
 
 //updateContextMenuState();
 
-window.addEventListener('resize', updateContextMenuState);
+//window.addEventListener('resize', updateContextMenuState);
 
 
 /**

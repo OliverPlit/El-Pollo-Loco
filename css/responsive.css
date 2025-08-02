@@ -1,11 +1,11 @@
-@media only screen and (max-width: 760px){
+@media only screen and (max-width: 760px) {
     #mobileControls {
         display: flex;
     }
 }
 
 
-@media only screen and (orientation: landscape) and (max-width: 1390px) {
+@media only screen and (pointer: coarse) and (max-width: 1399px) {
     canvas {
         width: 100vw;
         height: 100vh;
@@ -18,13 +18,15 @@
         align-items: center;
     }
 
-   .legal-notice {
+    .legal-notice {
         display: none !important;
     }
-.legal_notice_mobile {
-    display: flex;
-}
-     h1{
+
+    .legal_notice_mobile {
+        display: flex;
+    }
+
+    h1 {
         display: none !important;
     }
 
@@ -34,16 +36,19 @@
 }
 
 
-@media only screen and (orientation: portrait) and (max-width: 1399px) {
+@media only screen and (orientation: portrait) and (max-width: 1200px),
+only screen and (orientation: portrait) and (max-height: 600px) {
+
     .canva_main_div,
-    canvas,.relative,
+    canvas,
+    .relative,
     #icons,
     #startButton {
         display: none;
     }
 
     body::before {
-        content: "Bitte Gerät drehen ↻";
+        content: "Please rotate the device ↻";
         position: absolute;
         top: 40%;
         left: 50%;
@@ -59,6 +64,7 @@
     .h1_div {
         display: none;
     }
+
     .legal_notice_mobile {
         display: block !important;
     }
@@ -66,7 +72,9 @@
 
 
 @media only screen and (max-height: 720px) {
-    canvas, .relative {
+
+    canvas,
+    .relative {
         width: 100%;
     }
 
@@ -95,10 +103,11 @@
     .icons_start {
         position: fixed;
         right: 20px;
-            img {
-                width: 30px;
-                height: 30px;
-            }
+
+        img {
+            width: 30px;
+            height: 30px;
+        }
     }
 }
 
