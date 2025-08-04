@@ -167,13 +167,6 @@ function startSound() {
 }
 
 /**
- * Starts playing the background audio (alias of startSound).
- */
-function startAudio() {
-    backgroundAudio.play();
-}
-
-/**
  * Toggles audio mute state for background and all other sounds.
  * Updates the audio icon accordingly.
  */

@@ -3,7 +3,7 @@
  */
 class Character extends MovableObject {
     height = 260;
-    y = 180; 
+    y = 180;
     x = 0;
     speed = 10;
     coins = 0;
@@ -15,7 +15,7 @@ class Character extends MovableObject {
     animationInProgress = false;
 
     world;
-    offset = { top: 101, bottom: 10, left: 10, right: 30 };
+    offset = { top: 101, bottom: 10, left: 20, right: 30 };
 
     IMAGES_IDLE = [
         './assets/img/2_character_pepe/1_idle/idle/I-1.png',
@@ -186,7 +186,7 @@ class Character extends MovableObject {
             const now = Date.now();
             const timeSinceLastAction = (now - this.lastActionTime) / 1000;
             this.handleAnimations(timeSinceLastAction);
-        }, 80);
+        }, 100);
     }
 
     /**
@@ -194,40 +194,43 @@ class Character extends MovableObject {
      * @param {number} timeSinceLastAction - Seconds since last user action
      */
     handleAnimations(timeSinceLastAction) {
-        const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
-        const isJumping = this.isAboveGround();
+    const isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+    const isJumping = this.isAboveGround();
 
-        if (this.isDead()) {
-            this.handleDead();
-            this.wasJumping = false;
-            return;
-        }
-
-        if (this.isHurt()) {
-            this.handleHurt();
-            this.wasJumping = false;
-            return;
-        }
-
-        if (isJumping) {
-            if (!this.wasJumping && !this.animationInProgress) {
-                this.playAnimationOnce(this.IMAGES_JUMPING, () => {
-                    this.animationInProgress = false;
-                });
-                this.wasJumping = true;
-            }
-            return;
-        } else {
-            this.wasJumping = false;
-        }
-
-        if (isMoving) {
-            this.playAnimation(this.IMAGES_WALKING);
-            return;
-        }
-
-        this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+    if (this.isDead()) {
+        this.handleDead();
+        this.wasJumping = false;
+        return;
     }
+
+    if (this.isHurt()) {
+        this.handleHurt();
+        this.wasJumping = false;
+        return;
+    }
+
+    if (isJumping) {
+        if (!this.wasJumping) {
+            this.animationInProgress = true;
+            this.currentImage = 0;
+            this.wasJumping = true;
+        }
+        this.playAnimation(this.IMAGES_JUMPING);
+        return;
+    } else {
+        this.wasJumping = false;
+        this.animationInProgress = false;
+    }
+
+    if (isMoving) {
+        this.playAnimation(this.IMAGES_WALKING);
+        return;
+    }
+
+    if (!isJumping && !this.isHurt() && !isMoving) {
+        this.playAnimation(this.IMAGES_IDLE);
+    }
+}
 
     /**
      * Plays dead animation and sets game over state.

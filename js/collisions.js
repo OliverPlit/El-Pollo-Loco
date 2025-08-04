@@ -37,14 +37,15 @@ function addCollisionFunctionsToWorld(world) {
      * @returns {boolean} True if the character is jumping on top of the enemy.
      */
     world.isJumpingOnEnemy = function (enemy) {
-    const cBox = this.character.getHitBox();
-    const eBox = enemy.getHitBox();
-    const isJumping = this.character.speedY < 0;
-    const tolerance = 30;
-    const hitsTop = cBox.bottom <= eBox.top + tolerance;
-    
-    return isJumping && hitsTop;
-};
+        const cBox = this.character.getHitBox();
+        const eBox = enemy.getHitBox();
+        const isJumping = this.character.speedY < 0;
+        const tolerance = 22;
+        const hitZoneBottom = eBox.top + (eBox.bottom - eBox.top) / 2 + tolerance;
+        const isAbove = cBox.bottom <= hitZoneBottom;
+        const horizontalOverlap = cBox.right > eBox.left && cBox.left < eBox.right;
+        return isJumping && isAbove && horizontalOverlap;
+    };
 
 
     /**
@@ -53,9 +54,9 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.killEnemy = function (enemy) {
         enemy.energy = 0;
-     if (this.character.speedY < 0) {
-    this.character.speedY = 10; 
-}
+        if (this.character.speedY < 0) {
+            this.character.speedY = 15;
+        }
     };
 
     /**

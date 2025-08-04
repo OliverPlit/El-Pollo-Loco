@@ -229,6 +229,7 @@ class World {
     addtoMap(mo) {
         if (mo.otherDirection) this.flipImage(mo);
         mo.draw(this.ctx);
+   // mo.drawHitBox?.(this.ctx);
         if (mo.otherDirection) this.flipImageBack(mo);
     }
 

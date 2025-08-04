@@ -35,7 +35,19 @@ class MovableObject extends DrawableObject {
         MovableObject.allMovables.push(this);
 
     }
-
+drawHitBox(ctx) {
+    const hb = this.getHitBox();
+    ctx.save();
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(
+        hb.left,
+        hb.top,
+        hb.right - hb.left,
+        hb.bottom - hb.top
+    );
+    ctx.restore();
+}
     /**
      * Applies gravity to the object, making it fall if above ground.
      */
@@ -47,6 +59,20 @@ class MovableObject extends DrawableObject {
             }
         }, 1000 / 25);
     }
+
+    applyGravityCharacter() {
+    setInterval(() => {
+        if (this.isAboveGround() || this.speedY > 0) {
+            this.y -= this.speedY;
+            this.speedY -= this.acceleration;
+
+            if (this.y > 180) {
+                this.y = 180;   
+                this.speedY = 0;
+            }
+        }
+    }, 1000 / 25);
+}
 
     /**
      * Makes the object jump by setting an upward vertical speed.
@@ -152,29 +178,6 @@ class MovableObject extends DrawableObject {
         let path = images[i];
         this.img = this.imageCache[path];
         this.currentImage++;
-    }
-
-
-    /**
- * Plays the given image sequence exactly once.
- * @param {string[]} images - Array of image paths
- * @param {Function} callback - Called when animation is finished
- */
-    playAnimationOnce(images, callback) {
-        if (this.animationInProgress) return;
-
-        this.animationInProgress = true;
-        let i = 0;
-        this.animationInterval = setInterval(() => {
-            if (i >= images.length) {
-                clearInterval(this.animationInterval);
-                this.animationInProgress = false;
-                if (callback) callback();
-            } else {
-                this.img = this.imageCache[images[i]];
-                i++;
-            }
-        }, 65); // 100ms pro Frame, anpassen nach Geschmack
     }
 
 }
