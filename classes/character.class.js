@@ -186,7 +186,7 @@ class Character extends MovableObject {
             const now = Date.now();
             const timeSinceLastAction = (now - this.lastActionTime) / 1000;
             this.handleAnimations(timeSinceLastAction);
-        }, 50);
+        }, 80);
     }
 
     /**
@@ -252,7 +252,7 @@ class Character extends MovableObject {
      * @param {number} timeSinceLastAction - Inactivity duration in seconds
      */
     handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
-        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 15) {
+        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 8) {
             if (this.world.paused) {
                 if (!this.sleepSound.paused) {
                     this.sleepSound.pause();

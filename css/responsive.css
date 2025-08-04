@@ -6,20 +6,10 @@
 
 
 @media only screen and (pointer: coarse) and (max-width: 1399px) {
-    canvas {
-        width: 100vw;
-        height: 100vh;
-        display: block;
-    }
-
     .canva_main_div {
         height: 100vh;
         justify-content: center;
         align-items: center;
-    }
-
-    .legal-notice {
-        display: none !important;
     }
 
     .legal_notice_mobile {
@@ -30,9 +20,6 @@
         display: none !important;
     }
 
-    #fullscreen {
-        display: none !important;
-    }
 }
 
 
@@ -84,12 +71,16 @@ only screen and (orientation: portrait) and (max-height: 600px) {
     }
 
     .icons_start {
-        position: fixed;
+        position: absolute;
         top: 20px;
     }
 
     h1 {
         display: none;
+    }
+
+    .legal-notice {
+        display: none !important;
     }
 }
 

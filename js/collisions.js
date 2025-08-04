@@ -75,7 +75,7 @@ function addCollisionFunctionsToWorld(world) {
      */
     world.handleCharacterHit = function (enemy) {
         if (enemy instanceof Endboss) {
-            this.character.energy -= 20;
+            this.character.energy -= 40;
         } else {
             this.character.hit();
         }

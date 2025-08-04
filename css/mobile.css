@@ -15,25 +15,27 @@
     transform: scale(0.95);
 }
 
+.button_div {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
 
 @media only screen and (pointer: coarse) and (max-width: 1399px) {
     #mobileControls.visible {
         display: flex !important;
-        position: fixed;
-        bottom: 10px;
+        position: absolute;
+        bottom: 15px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 9999;
-        gap: 120px;
+        gap: 320px;
         justify-content: center;
     }
 
     .button_mobile_space {
         width: 90px !important;
-    }
-
-    .legal-notice {
-        display: none;
     }
 
     h1 {
@@ -44,8 +46,7 @@
 
 @media only screen and (pointer: coarse) and (min-width: 768px) and (max-width: 1399px) {
     #mobileControls.visible {
-        bottom: 50px;
-        gap: 180px; 
+        gap: 280px;
     }
 
     #mobileControls button {

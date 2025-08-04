@@ -98,10 +98,8 @@ function exitFullscreen() {
  */
 function handleCanvasClick(event) {
   const rect = canvas.getBoundingClientRect();
-
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
-
   const x = (event.clientX - rect.left) * scaleX;
   const y = (event.clientY - rect.top) * scaleY;
 
@@ -219,7 +217,7 @@ function startGame() {
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').classList.add('visible');
-  startAudio();
+  startSound();
 }
 
 /**
