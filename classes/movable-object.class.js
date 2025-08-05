@@ -80,7 +80,7 @@ drawHitBox(ctx) {
      */
     jump() {
         if (!this.isAnimatedPaused) {
-            this.speedY = 23;
+            this.speedY = 25;
 
         }
     }
@@ -181,4 +181,11 @@ drawHitBox(ctx) {
         this.currentImage++;
     }
 
+    playAnimationOnce(images) {
+    if (this.currentImage < images.length) {
+        let path = images[this.currentImage];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    }
+}
 }

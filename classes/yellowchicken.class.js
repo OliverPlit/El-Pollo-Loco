@@ -4,16 +4,16 @@
  */
 class YellowChicken extends MovableObject {
     /** @type {number} Height of the chicken */
-    height = 70;
+    height = 60;
 
     /** @type {number} Width of the chicken */
-    width = 80;
+    width = 70;
 
     /** @type {number} Vertical position */
-    y = 370;
+    y = 630;
 
     /** @type {number} Initial vertical speed for jump */
-    speedY = 20;
+    speedY = 10;
 
     /** @type {number} Current energy (health) */
     energy = 1;
@@ -142,7 +142,7 @@ class YellowChicken extends MovableObject {
             this.loadImage(this.IMAGES_DEAD[0]);
             this.isDeadSound.play();
             this.isDead = true;
-            this.stopAllAnimations(); // <- WICHTIG
+            this.stopAllAnimations();
             this.removeFromWorldAfterDelay();
         }
     }

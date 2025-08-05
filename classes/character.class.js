@@ -206,7 +206,7 @@ class Character extends MovableObject {
             const now = Date.now();
             const timeSinceLastAction = (now - this.lastActionTime) / 1000;
             this.handleAnimations(timeSinceLastAction);
-        }, 150);
+        }, 100);
     }
 
     /**
@@ -248,9 +248,7 @@ class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_JUMPING_FLY);
             } else if (isFalling && nearGround) {
                 this.playAnimation(this.IMAGES_JUMPING_LAND);
-            } else {
-                this.playAnimation(this.IMAGES_JUMPING_FLY);
-            }
+            } 
             return;
         }
 
@@ -262,6 +260,8 @@ class Character extends MovableObject {
         if (!isJumping && !this.isHurt() && !isMoving) {
             this.playAnimation(this.IMAGES_IDLE);
         }
+        this.handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction);
+
     }
     /**
      * Plays dead animation and sets game over state.
@@ -286,7 +286,7 @@ class Character extends MovableObject {
      * @param {number} timeSinceLastAction - Inactivity duration in seconds
      */
     handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
-        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 8) {
+        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 6) {
             if (this.world.paused) {
                 if (!this.sleepSound.paused) {
                     this.sleepSound.pause();

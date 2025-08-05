@@ -202,6 +202,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
  * and adjusting UI elements visibility.
  */
 function startGame() {
+    startSound();
   if (world) {
     world.stopGameLoop();
     world = null;
@@ -218,7 +219,6 @@ function startGame() {
   document.getElementById('back').style.display = 'flex';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').classList.add('visible');
-  startSound();
 }
 
 /**
