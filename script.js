@@ -55,9 +55,9 @@ function updateContextMenuState() {
     }
 }
 
-//updateContextMenuState();
+updateContextMenuState();
 
-//window.addEventListener('resize', updateContextMenuState);
+window.addEventListener('resize', updateContextMenuState);
 
 
 /**
@@ -294,3 +294,41 @@ window.addEventListener('keyup', (event) => {
     keyboard.D = false;
   }
 });
+
+function initMobileButtons() {
+    const holdButtons = [
+        { id: 'btnLeft', key: 'LEFT' },
+        { id: 'btnRight', key: 'RIGHT' }
+    ];
+
+    const tapButtons = [
+        { id: 'btnJump', key: 'SPACE' },
+        { id: 'btnThrow', key: 'D' }
+    ];
+
+    holdButtons.forEach(({ id, key }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pressKeyDown(key);
+        });
+
+        btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            pressKeyUp(key);
+        });
+    });
+
+    tapButtons.forEach(({ id, key }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pressKeyDown(key);
+            setTimeout(() => pressKeyUp(key), 150); 
+        });
+    });
+}

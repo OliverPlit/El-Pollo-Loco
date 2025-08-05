@@ -60,6 +60,7 @@ drawHitBox(ctx) {
         }, 1000 / 25);
     }
 
+    
     applyGravityCharacter() {
     setInterval(() => {
         if (this.isAboveGround() || this.speedY > 0) {
@@ -79,7 +80,7 @@ drawHitBox(ctx) {
      */
     jump() {
         if (!this.isAnimatedPaused) {
-            this.speedY = 25;
+            this.speedY = 23;
 
         }
     }

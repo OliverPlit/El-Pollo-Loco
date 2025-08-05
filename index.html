@@ -37,8 +37,6 @@
     <script src="./classes/sounds.class.js"></script>
     <script src="./classes/level.class.js"></script>
     <script src="./levels/level1.js"></script>
-
-
 </head>
 
 <body>
@@ -80,18 +78,18 @@
                 </div>
                  <div id="mobileControls" style="display: none;">
                 <div class="button_div">
-                    <button onmousedown="pressKeyDown('LEFT')" onmouseup="pressKeyUp('LEFT')"
+                    <button id="btnLeft" onmousedown="pressKeyDown('LEFT')" onmouseup="pressKeyUp('LEFT')"
                         ontouchstart="pressKeyDown('LEFT')" ontouchend="pressKeyUp('LEFT')">←</button>
 
-                    <button class="button_mobile_space" onmousedown="pressKeyDown('D')" onmouseup="pressKeyUp('D')"
+                    <button id="btnThrow" class="button_mobile_space" onmousedown="pressKeyDown('D')" onmouseup="pressKeyUp('D')"
                         ontouchstart="pressKeyDown('D')" ontouchend="pressKeyUp('D')">D</button>
                 </div>
                 <div class="button_div">
-                    <button class="button_mobile_space" onmousedown="pressKeyDown('SPACE')"
+                    <button id="btnJump" class="button_mobile_space" onmousedown="pressKeyDown('SPACE')"
                         onmouseup="pressKeyUp('SPACE')" ontouchstart="pressKeyDown('SPACE')"
                         ontouchend="pressKeyUp('SPACE')">Space</button>
 
-                    <button onmousedown="pressKeyDown('RIGHT')" onmouseup="pressKeyUp('RIGHT')"
+                    <button id="btnRight" onmousedown="pressKeyDown('RIGHT')" onmouseup="pressKeyUp('RIGHT')"
                         ontouchstart="pressKeyDown('RIGHT')" ontouchend="pressKeyUp('RIGHT')">→</button>
                 </div>
             </div>

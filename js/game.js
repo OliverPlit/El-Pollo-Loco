@@ -31,6 +31,7 @@ function init() {
       canvas.addEventListener('click', handleCanvasClick);
 
   };
+  initMobileButtons();
 }
 /**
  * Event listener for fullscreen change.

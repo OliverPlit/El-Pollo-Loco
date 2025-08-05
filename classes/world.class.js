@@ -100,7 +100,7 @@ class World {
         while (this.coins.length < 30) {
             let coin = new Coins();
             coin.x = 100 + Math.random() * 2800;
-            coin.y = 100 + Math.random() * 280;
+            coin.y = 150 + Math.random() * 140;
             if (!this.coins.some(c => Math.hypot(c.x - coin.x, c.y - coin.y) < minDistance)) {
                 this.coins.push(coin);
             }
