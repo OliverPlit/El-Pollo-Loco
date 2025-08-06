@@ -28,10 +28,28 @@ function init() {
   startImage.src = 'assets/img/9_intro_outro_screens/start/startscreen_1.png';
   startImage.onload = () => {
     loadStartScreen();
-      canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('click', handleCanvasClick);
 
   };
   initMobileButtons();
+}
+
+function applyInitialAudioSettings() {
+  isAudioMuted = localStorage.getItem('audioMuted') === 'true';
+  const iconOn = './assets/img/icons/speaker-filled-audio-tool.png';
+  const iconOff = 'assets/img/icons/sound-off.png';
+
+  if (isAudioMuted) {
+    backgroundAudio.pause();
+    backgroundAudio.currentTime = 0;
+    window.soundManager?.muteAll?.();
+    audioImg.src = iconOff;
+  } else {
+    backgroundAudio.volume = 0.3;
+    backgroundAudio.play().catch(() => { });
+    window.soundManager?.unmuteAll?.();
+    audioImg.src = iconOn;
+  }
 }
 /**
  * Event listener for fullscreen change.
@@ -43,6 +61,11 @@ window.addEventListener("fullscreenchange", () => {
   }
 });
 
+
+window.addEventListener('load', () => {
+  init();
+  applyInitialAudioSettings(); // direkt nach dem Laden
+});
 /**
  * Toggles fullscreen mode for the game container.
  * If not fullscreen, enters fullscreen on the element with id 'relative'.
@@ -84,9 +107,9 @@ function enterFullscreen(element) {
  * Exits fullscreen mode if currently active.
  */
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   }
 }
@@ -129,7 +152,7 @@ function drawStartScreen() {
   if (!startImage) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(startImage, 0, 0, canvas.width, canvas.height);
-  drawStartButton(ctx); 
+  drawStartButton(ctx);
 
   if (showExplanation) {
     drawExplanationOverlayBeforeStart(ctx);
@@ -202,7 +225,7 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
  * and adjusting UI elements visibility.
  */
 function startGame() {
-    startSound();
+      startSound();
   if (world) {
     world.stopGameLoop();
     world = null;
@@ -210,7 +233,7 @@ function startGame() {
   const level1 = createLevel1();
   world = new World(canvas, keyboard, level1);
   world.level.enemies.forEach(enemy => enemy.animate());
-  
+
   document.getElementById('legend').style.display = 'none';
   document.getElementById('statement').style.display = 'none';
   document.getElementById('fullscreen').style.display = 'flex';
@@ -243,7 +266,7 @@ function backToStart() {
   document.getElementById('back').style.display = 'none';
   document.getElementById('window_back').style.display = 'none';
   document.getElementById('mobileControls').style.display = 'none';
-    document.getElementById('mobileControls').classList.remove('visible');
+  document.getElementById('mobileControls').classList.remove('visible');
 
 }
 

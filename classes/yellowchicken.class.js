@@ -10,7 +10,7 @@ class YellowChicken extends MovableObject {
     width = 70;
 
     /** @type {number} Vertical position */
-    y = 630;
+    y = 370;
 
     /** @type {number} Initial vertical speed for jump */
     speedY = 10;

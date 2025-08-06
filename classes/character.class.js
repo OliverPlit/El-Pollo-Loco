@@ -13,7 +13,7 @@ class Character extends MovableObject {
     sleepSound = new Audio('./audio/491961__cmilo1269__snoring.wav');
     lastActionTime = Date.now();
     animationInProgress = false;
-
+    idleAnimationInterval = null;
     world;
     offset = { top: 101, bottom: 10, left: 20, right: 30 };
 
@@ -206,7 +206,7 @@ class Character extends MovableObject {
             const now = Date.now();
             const timeSinceLastAction = (now - this.lastActionTime) / 1000;
             this.handleAnimations(timeSinceLastAction);
-        }, 100);
+        }, 130);
     }
 
     /**
@@ -285,19 +285,61 @@ class Character extends MovableObject {
      * @param {boolean} isJumping - Whether character is jumping
      * @param {number} timeSinceLastAction - Inactivity duration in seconds
      */
-    handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
-        if (!this.isHurt() && !isMoving && !isJumping && timeSinceLastAction >= 6) {
-            if (this.world.paused) {
-                if (!this.sleepSound.paused) {
-                    this.sleepSound.pause();
-                    this.sleepSound.currentTime = 0;
-                }
-            } else {
-                this.playAnimation(this.IMAGES_SLEEP);
-                if (this.sleepSound.paused) this.sleepSound.play();
-            }
-        } else if (!this.isHurt() && !isMoving && !isJumping) {
-            this.playAnimation(this.IMAGES_IDLE);
+   handleIdleOrSleep(isMoving, isJumping, timeSinceLastAction) {
+    const shouldIdle = !this.isHurt() && !isMoving && !isJumping;
+    const shouldSleep = shouldIdle && timeSinceLastAction >= 6;
+
+    if (shouldSleep) {
+        this.stopIdleAnimation(); 
+        this.playAnimation(this.IMAGES_SLEEP);
+        if (!this.world.paused && this.sleepSound.paused) {
+            this.sleepSound.play();
+        }
+    } else if (shouldIdle) {
+        this.startIdleAnimation(); 
+        if (!this.sleepSound.paused) {
+            this.sleepSound.pause();
+            this.sleepSound.currentTime = 0;
+        }
+    } else {
+        this.stopIdleAnimation(); 
+        if (!this.sleepSound.paused) {
+            this.sleepSound.pause();
+            this.sleepSound.currentTime = 0;
         }
     }
+}
+
+
+/**
+ * Starts the idle animation for the character.
+ * 
+ * This method initializes a `setInterval` loop that cycles through the
+ * idle animation frames. It only starts if the idle animation is not already running.
+ * The frame changes every 8000 milliseconds (8 seconds).
+ */
+startIdleAnimation() {
+    if (this.idleAnimationInterval) return;
+
+    this.currentImage = 0;
+
+    this.idleAnimationInterval = setInterval(() => {
+        let path = this.IMAGES_IDLE[this.currentImage % this.IMAGES_IDLE.length];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    }, 8000); // Frame duration in milliseconds
+}
+
+/**
+ * Stops the currently running idle animation.
+ * 
+ * This method clears the `setInterval` that was created by `startIdleAnimation()`
+ * and resets the interval variable to `null`.
+ */
+stopIdleAnimation() {
+    if (this.idleAnimationInterval) {
+        clearInterval(this.idleAnimationInterval);
+        this.idleAnimationInterval = null;
+    }
+}
 }

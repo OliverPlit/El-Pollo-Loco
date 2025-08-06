@@ -159,12 +159,13 @@ function drawIntro(ctx) {
  * Starts playing the background audio.
  */
 function startSound() {
-    const backgroundAudio = document.getElementById('startSound');
     if (!isAudioMuted) {
-        backgroundAudio.play();
+        backgroundAudio.volume = 0.3;
+        backgroundAudio.play().catch((err) => {
+        });
     }
-
 }
+
 
 /**
  * Toggles audio mute state for background and all other sounds.
@@ -249,24 +250,24 @@ function pressKeyUp(key) {
  * @param {KeyboardEvent} event 
  */
 window.addEventListener('keydown', (event) => {
-  if (event.keyCode == 39) {
-    keyboard.RIGHT = true;
-  }
-  if (event.keyCode == 37) {
-    keyboard.LEFT = true;
-  }
-  if (event.keyCode == 38) {
-    keyboard.UP = true;
-  }
-  if (event.keyCode == 40) {
-    keyboard.DOWN = true;
-  }
-  if (event.keyCode == 32) {
-    keyboard.SPACE = true;
-  }
-  if (event.keyCode == 68) {
-    keyboard.D = true;
-  }
+    if (event.keyCode == 39) {
+        keyboard.RIGHT = true;
+    }
+    if (event.keyCode == 37) {
+        keyboard.LEFT = true;
+    }
+    if (event.keyCode == 38) {
+        keyboard.UP = true;
+    }
+    if (event.keyCode == 40) {
+        keyboard.DOWN = true;
+    }
+    if (event.keyCode == 32) {
+        keyboard.SPACE = true;
+    }
+    if (event.keyCode == 68) {
+        keyboard.D = true;
+    }
 });
 
 /**
@@ -275,24 +276,24 @@ window.addEventListener('keydown', (event) => {
  * @param {KeyboardEvent} event 
  */
 window.addEventListener('keyup', (event) => {
-  if (event.keyCode == 39) {
-    keyboard.RIGHT = false;
-  }
-  if (event.keyCode == 37) {
-    keyboard.LEFT = false;
-  }
-  if (event.keyCode == 38) {
-    keyboard.UP = false;
-  }
-  if (event.keyCode == 40) {
-    keyboard.DOWN = false;
-  }
-  if (event.keyCode == 32) {
-    keyboard.SPACE = false;
-  }
-  if (event.keyCode == 68) {
-    keyboard.D = false;
-  }
+    if (event.keyCode == 39) {
+        keyboard.RIGHT = false;
+    }
+    if (event.keyCode == 37) {
+        keyboard.LEFT = false;
+    }
+    if (event.keyCode == 38) {
+        keyboard.UP = false;
+    }
+    if (event.keyCode == 40) {
+        keyboard.DOWN = false;
+    }
+    if (event.keyCode == 32) {
+        keyboard.SPACE = false;
+    }
+    if (event.keyCode == 68) {
+        keyboard.D = false;
+    }
 });
 
 function initMobileButtons() {
@@ -328,7 +329,7 @@ function initMobileButtons() {
         btn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             pressKeyDown(key);
-            setTimeout(() => pressKeyUp(key), 150); 
+            setTimeout(() => pressKeyUp(key), 150);
         });
     });
 }

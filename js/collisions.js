@@ -55,7 +55,7 @@ function addCollisionFunctionsToWorld(world) {
     world.killEnemy = function (enemy) {
         enemy.energy = 0;
         if (this.character.speedY < 0) {
-            this.character.speedY = 15;
+            this.character.speedY = 20;
         }
     };
 
